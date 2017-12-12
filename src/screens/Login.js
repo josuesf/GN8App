@@ -43,7 +43,7 @@ export default class Login extends Component<{}> {
                     </View>
                     <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
                         <TextInput onChangeText={(text) => this.setState({ password: text })}
-                            placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
+                           secureTextEntry={true} placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
                     {(this.state.username.length == 0 || this.state.password.length == 0) &&
                         <View style={{
@@ -51,22 +51,23 @@ export default class Login extends Component<{}> {
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                             onPress={() => navigate('lectorQR')}>
-                            <Text style={{ color: '#d1c4e9' }}>Iniciar Sesion</Text>
+                            <Text style={{ color: '#d1c4e9',fontWeight:'bold' }}>INICIAR SESION</Text>
                         </View>
                     }
                     {this.state.username.length > 0 && this.state.password.length > 0 &&
-                        <TouchableOpacity style={{
+                        <TouchableOpacity activeOpacity={0.8}
+                            style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                             onPress={() => navigate('lectorQR')}>
-                            <Text style={{ color: '#fff' }}>Iniciar Sesion</Text>
+                            <Text style={{ color: '#fff' ,fontWeight:'bold'}}>INICIAR SESION</Text>
                         </TouchableOpacity>}
                 </View>
                 <View style={{ height: height / 4 }}>
                     <View style={{ alignItems: 'center',justifyContent:'center',flexDirection:'row',padding:15, borderTopWidth: 1, borderColor: '#e0e0e0',width,marginTop:height/4-35 }}>
                         <Text style={{ color: '#9e9e9e' }} >¿No tienes cuenta? </Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigate('codigoQR')}>
                             <Text style={{ color: '#d1c4e9' }}>Registrate </Text>
                         </TouchableOpacity>
                         
