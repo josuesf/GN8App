@@ -14,7 +14,7 @@ import {
     TouchableOpacity,
     Dimensions,
     StatusBar,
-    Image
+    Image,Keyboard,
 } from 'react-native';
 const { width, height } = Dimensions.get('window')
 export default class Login extends Component<{}> {
@@ -43,14 +43,14 @@ export default class Login extends Component<{}> {
                     </View>
                     <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
                         <TextInput onChangeText={(text) => this.setState({ password: text })}
-                            placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
+                            placeholder="Contraseña" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
                     {(this.state.username.length == 0 || this.state.password.length == 0) &&
                         <View style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
-                            onPress={() => navigate('lectorQR')}>
+                           >
                             <Text style={{ color: '#d1c4e9' }}>Iniciar Sesion</Text>
                         </View>
                     }
@@ -59,7 +59,7 @@ export default class Login extends Component<{}> {
                             borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
-                            onPress={() => navigate('lectorQR')}>
+                        onPress={() => {Keyboard.dismiss();navigate('main');}}>
                             <Text style={{ color: '#fff' }}>Iniciar Sesion</Text>
                         </TouchableOpacity>}
                 </View>

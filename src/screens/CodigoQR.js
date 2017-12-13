@@ -18,6 +18,9 @@ import {
   Button,
 } from 'react-native';
 import QRCode from 'react-native-qrcode';
+import Icon from 'react-native-vector-icons/Ionicons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import Toolbar from '../components/toolbar'
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -29,7 +32,15 @@ import Camera from 'react-native-camera';
 export default class CodigoQR extends Component<{}> {
     static navigationOptions = {
         title: 'Crear codigo QR',
-        headerTintColor:'purple'
+        headerTintColor:'purple',
+        header:null,
+        tabBarIcon: ({ tintColor, focused }) => (
+            <IconMaterial
+                name={focused ? 'qrcode' : 'qrcode'}
+                size={25}
+                color={focused ? tintColor : '#9e9e9e'}
+            />
+        ),
     };
   _handleBarCodeRead(e) {
     Vibration.vibrate();
@@ -49,8 +60,10 @@ export default class CodigoQR extends Component<{}> {
     }
   }
   render() {
+    const { navigate } = this.props.navigation;
     return (
         <View style={styles.container}>
+        <Toolbar navigation={navigate} banner={"Invitaciones"} />
           <TextInput
             style={styles.input}
             onChangeText={(text) => this.setState({text: text})}
@@ -69,9 +82,7 @@ export default class CodigoQR extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFF',
   },
   camera: {
     flex: 0,

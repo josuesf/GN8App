@@ -18,7 +18,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toolbar from '../components/toolbar'
-import ListaPosts from '../components/ListaPosts'
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
         'Cmd+D or shake for dev menu',
@@ -26,7 +25,7 @@ const instructions = Platform.select({
         'Shake or press menu button for dev menu',
 });
 
-export default class CodigoQR extends Component<{}> {
+export default class Perfil extends Component<{}> {
     static navigationOptions = {
         title: 'Home',
         headerTintColor: 'purple',
@@ -34,8 +33,8 @@ export default class CodigoQR extends Component<{}> {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconMaterial
-                name={focused ? 'home' : 'home-outline'}
-                size={26}
+                name={focused ? 'account' : 'account-outline'}
+                size={25}
                 color={focused ? tintColor : '#9e9e9e'}
             />
         ),
@@ -43,15 +42,14 @@ export default class CodigoQR extends Component<{}> {
     constructor() {
         super()
         this.state = {
-            posts:[{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'}]
+
         }
     }
     render() {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
-                <Toolbar navigation={navigate} banner={"GN8"} />
-                <ListaPosts posts={this.state.posts} />
+                <Toolbar navigation={navigate} banner={"Perfil"} />
             </View>
         );
     }

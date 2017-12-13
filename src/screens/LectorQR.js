@@ -18,6 +18,8 @@ import {
     Button,
 } from 'react-native';
 import QRCode from 'react-native-qrcode';
+import Icon from 'react-native-vector-icons/Ionicons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 const instructions = Platform.select({
     ios: 'Press Cmd+R to reload,\n' +
         'Cmd+D or shake for dev menu',
@@ -26,11 +28,20 @@ const instructions = Platform.select({
 });
 //import QRCodeScanner from 'react-native-qrcode-scanner';
 import Camera from 'react-native-camera';
+import Toolbar from '../components/toolbar'
 export default class LectorQR extends Component<{}> {
     static navigationOptions = {
         title: 'Lector QR',
-        headerTintColor: 'green',
-        
+        headerTintColor: 'purple',
+        header: null,
+        tabBarIcon: ({ tintColor, focused }) => (
+            <IconMaterial
+                name={focused ? 'qrcode-scan' : 'qrcode-scan'}
+                size={25}
+                color={focused ? tintColor : '#9e9e9e'}
+            />
+        ),
+
     };
     _handleBarCodeRead(e) {
         Vibration.vibrate();
@@ -50,12 +61,11 @@ export default class LectorQR extends Component<{}> {
         }
     }
     render() {
+        const { navigate } = this.props.navigation;
         if (this.state.scanning) {
             return (
                 <View style={styles.container}>
-                    <Text style={styles.welcome}>
-                        Barcode Scanner
-        </Text>
+                    <Toolbar navigation={navigate} banner={"Scanner Code"} />
                     <View style={styles.rectangleContainer}>
                         <Camera style={styles.camera} type={this.state.cameraType} onBarCodeRead={this._handleBarCodeRead.bind(this)}>
                             <View style={styles.rectangleContainer}>
@@ -64,7 +74,7 @@ export default class LectorQR extends Component<{}> {
                         </Camera>
                     </View>
                     <Text style={styles.instructions}>
-                        Double tap R on your keyboard to reload,{'\n'}
+                        Escanee el codigo QR
                     </Text>
                 </View>
             );
@@ -72,7 +82,7 @@ export default class LectorQR extends Component<{}> {
         else {
             return (<View style={styles.container}>
                 <Text style={styles.welcome}>
-                    Barcode Scanner
+                    Resultado
         </Text>
                 <Text style={styles.instructions}>
                     {this.state.resultado}
@@ -87,8 +97,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        backgroundColor: '#FFF',
     },
     camera: {
         flex: 0,
