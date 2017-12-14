@@ -4,6 +4,7 @@ import {
     ListView,
     TouchableOpacity,
     AsyncStorage,
+    RefreshControl,
 } from 'react-native';
 import PostBox from './PostBox'
 export default class ListaPosts extends Component {
@@ -12,6 +13,7 @@ export default class ListaPosts extends Component {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.state = {
             dataSource: ds,
+            refreshing:false,
         }
     }
     componentDidMount() {
@@ -28,10 +30,20 @@ export default class ListaPosts extends Component {
     }
     showDetail = (post) => {
     }
+    _onRefresh() {
+        this.setState({ refreshing: true });
+        this.setState({ refreshing: false });
+    }
     render() {
 
         return (
             <ListView
+                refreshControl={
+                    <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this._onRefresh.bind(this)}
+                    />
+                }
                 enableEmptySections={true}
                 dataSource={this.state.dataSource}
                 renderRow={(post) => {

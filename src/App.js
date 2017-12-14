@@ -7,20 +7,25 @@ import CodigoQR from './screens/CodigoQR'
 import Login from './screens/Login'
 import Home from './screens/Home'
 import Perfil from './screens/Perfil'
+import Buscar from './screens/Buscar'
 
 const Main = TabNavigator({
   home: {
     screen: Home,
     path: '',
   },
-  lectorQR: {
-    screen: LectorQR,
-    path: 'lector',
+  buscador:{
+    screen: Buscar,
+    path:'buscar'
   },
   codigoQR: {
     screen: CodigoQR,
     path: 'codigo',
   },
+  lectorQR: {
+    screen: LectorQR,
+    path: 'lector',
+  },  
   perfil:{
     screen: Perfil,
     path: 'perfil',
@@ -43,6 +48,11 @@ const Main = TabNavigator({
   },
   
 });
+//Validar en base de datos si es que este usuario esta logueado para establecer
+var index='main'
+if( 4==4){
+  index='login'
+}
 
 const App = StackNavigator(
   {
@@ -54,7 +64,7 @@ const App = StackNavigator(
     },
   },
   {
-    initialRouteName: 'main',
+    initialRouteName: index,
     //headerMode: 'none',
     /*
    * Use modal on iOS because the card mode comes from the right,
