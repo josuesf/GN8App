@@ -60,7 +60,7 @@ export default class Login extends Component<{}> {
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                         onPress={() => {Keyboard.dismiss();navigate('main');}}>
-                            <Text style={{ color: '#fff' }}>Iniciar Sesion</Text>
+                            <Text style={{ color: '#fff',fontWeight:'bold' }}>INICIAR SESION</Text>
                         </TouchableOpacity>}
                 </View>
                 <View style={{ height: height / 4 }}>

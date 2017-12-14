@@ -8,6 +8,7 @@ import Login from './screens/Login'
 import Home from './screens/Home'
 import Perfil from './screens/Perfil'
 import Buscar from './screens/Buscar'
+import Invitaciones from './screens/Invitaciones'
 
 const Main = TabNavigator({
   home: {
@@ -18,14 +19,14 @@ const Main = TabNavigator({
     screen: Buscar,
     path:'buscar'
   },
-  codigoQR: {
-    screen: CodigoQR,
-    path: 'codigo',
+  invitaciones: {
+    screen: Invitaciones,
+    path: 'invitaciones',
   },
-  lectorQR: {
+  /*lectorQR: {
     screen: LectorQR,
     path: 'lector',
-  },  
+  }, */ 
   perfil:{
     screen: Perfil,
     path: 'perfil',

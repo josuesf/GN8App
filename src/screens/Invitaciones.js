@@ -21,46 +21,39 @@ import QRCode from 'react-native-qrcode';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toolbar from '../components/toolbar'
+import ListaInvitaciones from '../components/ListaInvitaciones'
+
 //import QRCodeScanner from 'react-native-qrcode-scanner';
 import Camera from 'react-native-camera';
-export default class CodigoQR extends Component<{}> {
-  constructor() {
+export default class Invitaciones extends Component<{}> {
+    static navigationOptions = {
+        title: 'Invitaciones',
+        headerTintColor:'purple',
+        header:null,
+        tabBarIcon: ({ tintColor, focused }) => (
+            <IconMaterial
+                name={focused ? 'qrcode' : 'qrcode'}
+                size={25}
+                color={focused ? tintColor : '#9e9e9e'}
+            />
+        ),
+    };
+  constructor(){
     super()
-    this.state = {
-      scanning: true,
-      resultado: '',
+    this.state={
+      scanning:true,
+      resultado:'',
+      invitaciones:[{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'}],
     }
   }
-  static navigationOptions = {
-    title: 'Crear codigo QR',
-    headerTintColor: 'purple',
-    header: null,
-    tabBarIcon: ({ tintColor, focused }) => (
-      <IconMaterial
-        name={focused ? 'qrcode' : 'qrcode'}
-        size={25}
-        color={focused ? tintColor : '#9e9e9e'}
-      />
-    ),
-  };
-
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
+        <View style={styles.container}>
         <Toolbar navigation={navigate} banner={"Invitaciones"} />
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => this.setState({ text: text })}
-          value={this.state.text}
-        />
-        <QRCode
-          value={this.state.text}
-          size={200}
-          bgColor='purple'
-          fgColor='white' />
-      </View>
-    );
+          <ListaInvitaciones invitaciones={this.state.invitaciones} />
+        </View>
+      );
   }
 }
 

@@ -19,6 +19,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import ListaEmpresas from '../components/ListaEmpresas'
+
 const {width,height} = Dimensions.get('window')
 export default class Buscar extends Component<{}> {
     constructor() {
@@ -26,6 +28,7 @@ export default class Buscar extends Component<{}> {
         this.state = {
             buscarBox: false,
             textBusqueda:'',
+            empresas:[{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'}]
         }
     }
     static navigationOptions = {
@@ -72,7 +75,7 @@ export default class Buscar extends Component<{}> {
         return (
             <View style={styles.container}>
                 {toolbar}
-
+                <ListaEmpresas empresas={this.state.empresas} />
 
             </View>
         );
