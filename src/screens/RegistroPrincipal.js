@@ -17,9 +17,8 @@ import {
     Image, Keyboard,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { NavigationActions } from 'react-navigation'
 const { width, height } = Dimensions.get('window')
-export default class Login extends Component<{}> {
+export default class RegistroPrincipal extends Component<{}> {
     static navigationOptions = {
         header: null,
     };
@@ -31,12 +30,6 @@ export default class Login extends Component<{}> {
     }
 
     render() {
-        const resetAction = NavigationActions.reset({
-            index: 0,
-            actions: [
-              NavigationActions.navigate({ routeName: 'registroMain'})
-            ]
-          })
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
@@ -44,32 +37,8 @@ export default class Login extends Component<{}> {
                 <View style={{ height: height / 3 }}>
 
                 </View>
-                <View style={{ height: height / 3 }}>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
-                        <TextInput onChangeText={(text) => this.setState({ username: text })}
-                            placeholder="Usuario" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
-                    </View>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
-                        <TextInput onChangeText={(text) => this.setState({ password: text })}
-                            secureTextEntry={true} placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
-                    </View>
-                    {(this.state.username.length == 0 || this.state.password.length == 0) &&
-                        <View style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
-                            width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
-                        }}>
-                            <Text style={{ color: '#d1c4e9', fontWeight: 'bold' }}>INICIAR SESION</Text>
-                        </View>
-                    }
-                    {this.state.username.length > 0 && this.state.password.length > 0 &&
-                        <TouchableOpacity activeOpacity={0.8}
-                            style={{
-                                borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
-                                width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
-                            }}
-                            onPress={() => { Keyboard.dismiss(); navigate('main'); }}>
-                            <Text style={{ color: '#fff', fontWeight: 'bold' }}>INICIAR SESION</Text>
-                        </TouchableOpacity>}
+                <View style={{ height: height / 3,alignItems:'center' }}>
+                   
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#3b5998', backgroundColor: '#3b5998',
@@ -80,12 +49,20 @@ export default class Login extends Component<{}> {
                         <Icon name='facebook-box' color='white' size={20} />
                         <Text style={{ color: '#fff', fontWeight: 'bold',marginLeft:10 }}>Iniciar sesion con Facebook</Text>
                     </TouchableOpacity>
+                    <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', padding: 15, 
+                        borderTopWidth: 1, borderColor: '#e0e0e0', width:width-50 }}>
+                        <Text style={{ color: '#9e9e9e' }} >¿Deseas registrarte con tu correo? </Text>
+                        <TouchableOpacity onPress={() => navigate('registro')}>
+                            <Text style={{ color: '#d1c4e9' }}>Registrar </Text>
+                        </TouchableOpacity>
+
+                    </View>
                 </View>
                 <View style={{ height: height / 4 }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', padding: 15, borderTopWidth: 1, borderColor: '#e0e0e0', width, marginTop: height / 4 - 35 }}>
-                        <Text style={{ color: '#9e9e9e' }} >¿No tienes cuenta? </Text>
-                        <TouchableOpacity onPress={() => this.props.navigation.dispatch(resetAction)}>
-                            <Text style={{ color: '#d1c4e9' }}>Registrate </Text>
+                        <Text style={{ color: '#9e9e9e' }} >¿Ya tienes una cuenta? </Text>
+                        <TouchableOpacity onPress={() => navigate('login')}>
+                            <Text style={{ color: '#d1c4e9' }}>Iniciar </Text>
                         </TouchableOpacity>
 
                     </View>

@@ -5,8 +5,11 @@ import { StackNavigator, TabNavigator } from 'react-navigation';
 import LectorQR from './screens/LectorQR'
 import CodigoQR from './screens/CodigoQR'
 import Login from './screens/Login'
+import RegistroPrincipal from './screens/RegistroPrincipal'
 import Home from './screens/Home'
 import Perfil from './screens/Perfil'
+import Buscar from './screens/Buscar'
+import Invitaciones from './screens/Invitaciones'
 import Registro from './screens/Registro'
 import RegistroDetalle from './screens/RegistroDetalle'
 const Main = TabNavigator({
@@ -14,13 +17,13 @@ const Main = TabNavigator({
     screen: Home,
     path: '',
   },
-  lectorQR: {
-    screen: LectorQR,
-    path: 'lector',
+  buscador: {
+    screen: Buscar,
+    path: 'buscar',
   },
-  codigoQR: {
-    screen: CodigoQR,
-    path: 'codigo',
+  invitaciones: {
+    screen: Invitaciones,
+    path: 'invitaciones',
   },
   perfil: {
     screen: Perfil,
@@ -47,6 +50,9 @@ const Main = TabNavigator({
 
 const App = StackNavigator(
   {
+    registroMain: {
+      screen: RegistroPrincipal,
+    },
     login: {
       screen: Login,
     },
@@ -61,7 +67,7 @@ const App = StackNavigator(
     },
   },
   {
-    initialRouteName: 'registro',
+    initialRouteName: 'registroMain',
     //headerMode: 'none',
     /*
    * Use modal on iOS because the card mode comes from the right,

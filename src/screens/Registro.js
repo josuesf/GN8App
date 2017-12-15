@@ -31,7 +31,7 @@ export default class Registro extends Component<{}> {
         return (
             <View style={styles.container}>
                 <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 30 }}>
-                    <Text style={{ color: '#2c3e50', fontFamily: 'Billabong', textAlign: 'center', fontSize: 30 }}>Welcome</Text>
+                    <Text style={{ color: '#2c3e50', fontFamily: 'Billabong', textAlign: 'center', fontSize:20 }}>Ingresa tu correo, nombre y contrasena</Text>
                 </View>
                 <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
                     <TextInput onChangeText={(text) => this.setState({ correo: text })}
@@ -39,29 +39,29 @@ export default class Registro extends Component<{}> {
                 </View>
                 <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
                     <TextInput onChangeText={(text) => this.setState({ nombre: text })}
-                        placeholder="Nombre y Apellido" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
+                        placeholder="Nombre completo" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
                 <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
                     <TextInput onChangeText={(text) => this.setState({ password: text })}
-                        placeholder="Contraseña" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
+                        placeholder="Contrasena" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
                 {(this.state.correo.length == 0 || this.state.nombre.length == 0|| this.state.password.length == 0) &&
                         <View style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#3498db',
+                            borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                         > 
-                            <Text style={{ color: '#3498db' }}>Continuar</Text>
+                            <Text style={{ color: '#d1c4e9',fontWeight:'bold' }}>CONTINUAR</Text>
                         </View>
                     }
                 {this.state.correo.length > 0 && this.state.nombre.length > 0 && this.state.password.length > 0 &&
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#3498db', backgroundColor: '#3498db',
+                            borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                         onPress={() => { Keyboard.dismiss(); navigate('registrodetalle'); }}>
-                        <Text style={{ color: '#fff' }}>Continuar</Text>
+                        <Text style={{ color: '#fff' }}>CONTINUAR</Text>
                     </TouchableOpacity>}
             </View>
         );
