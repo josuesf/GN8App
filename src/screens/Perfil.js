@@ -35,7 +35,7 @@ export default class Perfil extends Component<{}> {
             <IconMaterial
                 name={focused ? 'account' : 'account-outline'}
                 size={25}
-                color={focused ? tintColor : '#9e9e9e'}
+                color={focused ? tintColor : '#d1c4e9'}
             />
         ),
     };

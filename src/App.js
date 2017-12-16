@@ -33,7 +33,7 @@ const Main = TabNavigator({
     tabBarPosition: 'bottom',
     animationEnabled: true,
     tabBarOptions: {
-      activeTintColor: '#616161',
+      activeTintColor: '#831DA2',
       labelStyle: {
         fontSize: 12,
       },

@@ -34,7 +34,7 @@ export default class Invitaciones extends Component<{}> {
             <IconMaterial
                 name={focused ? 'qrcode' : 'qrcode'}
                 size={25}
-                color={focused ? tintColor : '#9e9e9e'}
+                color={focused ? tintColor : '#d1c4e9'}
             />
         ),
     };
@@ -43,7 +43,10 @@ export default class Invitaciones extends Component<{}> {
     this.state={
       scanning:true,
       resultado:'',
-      invitaciones:[{id:'1'},{id:'2'},{id:'3'},{id:'4'},{id:'5'}],
+      invitaciones:[
+      {id:'1',urlImagen:'https://cdn-az.allevents.in/banners/1e4c3117bd34d35b92a889fb1b1625ae',avatar:'https://pbs.twimg.com/profile_images/425651955805863937/kP3_xfBz_400x400.jpeg'
+      ,avatar:'https://pbs.twimg.com/profile_images/425651955805863937/kP3_xfBz_400x400.jpeg'},],
+
     }
   }
   render() {

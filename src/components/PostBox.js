@@ -38,8 +38,8 @@ export default class PostBox extends Component {
         return (
             <View style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
-                    <Image source={require('../assets/img/userAvatar.jpeg')}
-                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain, borderRadius: 300 }} />
+                    <Image source={{ uri: this.props.post.avatar }}
+                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,}} />
                     <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>Caos Cusco</Text>
                 </View>
                 <View style={{ alignItems: 'center', borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#e0e0e0' }}>
@@ -47,10 +47,10 @@ export default class PostBox extends Component {
                         style={{ height: this.state.heightImg, width: width }} resizeMode='contain' />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
-                    <IconMaterial name="message-outline" size={30} color="#9e9e9e" style={{ marginRight: 15 }} />
-                    <Icon name="ios-happy-outline" size={30} color="#9e9e9e" style={{ marginRight: 15 }} />
-                    <IconMaterial name="beer" size={30} color="#9e9e9e" style={{ marginRight: 15 }} />
-                    <IconMaterial name="qrcode" size={30} color="#9e9e9e" style={{ marginRight: 15 }} />
+                    <IconMaterial name="message-outline" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
+                    <Icon name="ios-happy-outline" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
+                    <IconMaterial name="beer" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
+                    <IconMaterial name="qrcode" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
 
                 </View>
                 <View style={{ flexDirection: 'column', marginBottom: 10, padding: 5, marginLeft: 10 }}>
@@ -66,8 +66,7 @@ export default class PostBox extends Component {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        shadowColor: 'black',
-        shadowOpacity: .2,
+        
     },
     image: {
         width: 50,

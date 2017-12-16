@@ -22,12 +22,12 @@ export default class EmpresaBox extends Component {
         return (
             <View style={styles.container}>
                 <View style={{flexDirection:'row',alignItems:'center',marginBottom:10,marginTop:5,padding:5}}>
-                    <Image source={require('../assets/img/userAvatar.jpeg')}
+                    <Image source={{ uri: this.props.empresa.avatar }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
                     
                 </View>
-                <Text style={{marginLeft:5,color:'#424242',fontWeight:'bold'}}>Caos Cusco</Text>
-                <View style={{flexDirection:'row',width:width/2-10,alignItems:'center',padding:5}}>
+                <Text style={{marginLeft:5,color:'#424242',fontWeight:'bold'}}>{this.props.empresa.nombre}</Text>
+                <View style={{flexDirection:'row',width:width/3+10,alignItems:'center',padding:10}}>
                     <Icon name="ios-heart" size={30} color="#ab47bc" style={{marginRight:5}}/>
                     <Text style={{fontSize:10,fontWeight:'bold',color:'#9e9e9e'}}>a ti, josuesfl y 10 personas les encanta</Text>
                     

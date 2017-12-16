@@ -37,7 +37,7 @@ export default class ListaInvitaciones extends Component {
     render() {
 
         return (
-            <ListView contentContainerStyle={styles.list}
+            <ListView 
                 refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}

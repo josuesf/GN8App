@@ -31,17 +31,24 @@ export default class Registro extends Component<{}> {
         return (
             <View style={styles.container}>
                 <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 30 }}>
-                    <Text style={{ color: '#2c3e50', fontFamily: 'Billabong', textAlign: 'center', fontSize:20 }}>Ingresa tu correo, nombre y contrasena</Text>
+                    <Text style={{ color: '#2c3e50',  textAlign: 'center', fontSize:20 }}>Ingresa tu correo, nombre y contrasena</Text>
                 </View>
-                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
+                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
+                backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                justifyContent:'center',height:50 }}>
                     <TextInput onChangeText={(text) => this.setState({ correo: text })}
-                        placeholder="Correo" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
+                        placeholder="Correo" placeholderTextColor="#9e9e9e" 
+                        underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
-                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
+                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
+                backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                justifyContent:'center',height:50 }}>
                     <TextInput onChangeText={(text) => this.setState({ nombre: text })}
                         placeholder="Nombre completo" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
-                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
+                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
+                backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                justifyContent:'center',height:50 }}>
                     <TextInput onChangeText={(text) => this.setState({ password: text })}
                         placeholder="Contrasena" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>

@@ -45,11 +45,15 @@ export default class Login extends Component<{}> {
 
                 </View>
                 <View style={{ height: height / 3 }}>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
+                    <View style={{ borderWidth: 1, borderRadius: 5,height:40, borderColor: '#e0e0e0',
+                     backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                     justifyContent:'center',height:50 }}>
                         <TextInput onChangeText={(text) => this.setState({ username: text })}
                             placeholder="Usuario" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
+                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
+                    backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                    justifyContent:'center',height:50 }}>
                         <TextInput onChangeText={(text) => this.setState({ password: text })}
                             secureTextEntry={true} placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
