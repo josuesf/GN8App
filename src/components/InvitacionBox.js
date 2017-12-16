@@ -28,7 +28,7 @@ export default class InvitacionBox extends Component {
                 </View>
                 <View style={{alignItems:'center',borderBottomWidth:1,borderTopWidth:1,borderColor:'#e0e0e0'}}>
                     <Image source={require('../assets/img/ejemplo1.jpg')}
-                        style={{ width: width/3,height:height/3,resizeMode: Image.resizeMode.contain}} />
+                        style={{flex:1, height: 100, width: width/3}} resizeMode="contain" />
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center',padding:5,marginLeft:10}}>
                     <IconMaterial name="qrcode" size={30} color="#9e9e9e" style={{marginRight:15}}/>
