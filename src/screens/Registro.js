@@ -24,7 +24,7 @@ export default class Registro extends Component<{}> {
     state = {
         correo: '',
         nombre: '',
-        password: '',
+        
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -46,13 +46,8 @@ export default class Registro extends Component<{}> {
                     <TextInput onChangeText={(text) => this.setState({ nombre: text })}
                         placeholder="Nombre completo" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
-                <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
-                backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
-                justifyContent:'center',height:50 }}>
-                    <TextInput onChangeText={(text) => this.setState({ password: text })}
-                        placeholder="Contrasena" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
-                </View>
-                {(this.state.correo.length == 0 || this.state.nombre.length == 0|| this.state.password.length == 0) &&
+                
+                {(this.state.correo.length == 0 || this.state.nombre.length == 0) &&
                         <View style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
@@ -61,13 +56,18 @@ export default class Registro extends Component<{}> {
                             <Text style={{ color: '#d1c4e9',fontWeight:'bold' }}>CONTINUAR</Text>
                         </View>
                     }
-                {this.state.correo.length > 0 && this.state.nombre.length > 0 && this.state.password.length > 0 &&
+                {this.state.correo.length > 0 && this.state.nombre.length > 0  &&
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
-                        onPress={() => { Keyboard.dismiss(); navigate('registrodetalle'); }}>
+                        onPress={() => { 
+                            Keyboard.dismiss(); 
+                            navigate('registrodetalle',{
+                                user:this.state.correo,
+                                photoUrl:'sin_imagen',
+                            }); }}>
                         <Text style={{ color: '#fff' }}>CONTINUAR</Text>
                     </TouchableOpacity>}
             </View>

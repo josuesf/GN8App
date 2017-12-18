@@ -60,24 +60,30 @@ export default class RegistroPrincipal extends Component<{}> {
                         this.setState({ progressVisible: false })
                         alert('Intente mas luego...')
                     } else {
-                        const user_data={
-                            id:res.id,
-                            name:res.name,
-                            first_name:res.first_name,
-                            last_name:res.last_name,
-                            email:res.email,
-                            picture:res.picture.url,
+                        //Preguntar si este id ya fue registrado
+                        //Si no fue registrado
+                        const user_data = {
+                            id: res.id,
+                            name: res.name,
+                            first_name: res.first_name,
+                            last_name: res.last_name,
+                            email: res.email,
+                            picture: res.picture.data.url,
                         }
                         AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                             const main = NavigationActions.reset({
                                 index: 0,
                                 actions: [
-                                    NavigationActions.navigate({ routeName: 'main' })
+                                    NavigationActions.navigate(
+                                        {
+                                            routeName: 'registrodetalle',
+                                            params: { user: user_data.email, photoUrl: user_data.picture }
+                                        })
                                 ]
                             })
                             this.props.navigation.dispatch(main)
-                        }).catch(err=>console.log('Error'));
-                        
+                        }).catch(err => console.log('Error'));
+                        //Si ya fue registrado
                     }
 
                 });
@@ -87,7 +93,7 @@ export default class RegistroPrincipal extends Component<{}> {
         }, (error) => {
 
             this.setState({ progressVisible: false })
-            Alert.alert('Error','Ocurrio un error, compruebe su conexion a internet')
+            Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
         })
     }
     render() {
