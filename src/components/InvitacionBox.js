@@ -29,6 +29,7 @@ export default class InvitacionBox extends Component {
     getHeight = (ulrimg) => {
         Image.getSize(ulrimg,
             (w, h) => {
+                if(this.refs.root)
                 this.setState({ heightImg: h / (w / width) })
             },
             (error) => console.log('error'))
@@ -36,7 +37,7 @@ export default class InvitacionBox extends Component {
     render() {
         this.getHeight(this.props.invitacion.urlImagen)
         return (
-            <View style={styles.container}>
+            <View ref='root' style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
                     <Image source={{ uri: this.props.invitacion.avatar }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,}} />

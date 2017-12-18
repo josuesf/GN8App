@@ -20,7 +20,7 @@ export default class EmpresaBox extends Component {
     render() {
 
         return (
-            <View style={styles.container}>
+            <View ref="root" style={styles.container}>
                 <View style={{flexDirection:'row',alignItems:'center',marginBottom:10,marginTop:5,padding:5}}>
                     <Image source={{ uri: this.props.empresa.avatar }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />

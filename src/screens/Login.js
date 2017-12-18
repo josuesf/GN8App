@@ -18,6 +18,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NavigationActions } from 'react-navigation'
+import FBSDK, {
+    LoginButton,
+    AccessToken,
+    LoginManager,
+    GraphRequestManager, GraphRequest,
+  } from 'react-native-fbsdk'
 const { width, height } = Dimensions.get('window')
 export default class Login extends Component<{}> {
     static navigationOptions = {
@@ -29,7 +35,30 @@ export default class Login extends Component<{}> {
         username: '',
         password: '',
     }
+    loginFB=()=>{
+        LoginManager.logInWithReadPermissions(['public_profile','email']).then(function(result){
+            if(result.isCancelled){
+                console.log('loging cancelled')
+            }
+            else {
+                console.log('login success' + result.grantedPermissions)
 
+                const infoRequest = new GraphRequest('/me', {
+                    parameters: {
+                        'fields': {
+                            'string' : 'email,first_name,last_name,picture'
+                        }
+                    }
+                }, (err, res) => {
+                    console.log(err, res);
+                });
+                new GraphRequestManager().addRequest(infoRequest).start();
+
+            }
+        }, function(error){
+            console.log('An error occured: ' + error)
+        })
+    }
     render() {
         const resetAction = NavigationActions.reset({
             index: 0,
@@ -80,7 +109,7 @@ export default class Login extends Component<{}> {
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10,flexDirection:'row',
                             alignItems:'center',justifyContent:'center'
                         }}
-                        onPress={() => { Keyboard.dismiss(); navigate('main'); }}>
+                        onPress={() =>  this.loginFB()}>
                         <Icon name='facebook-box' color='white' size={20} />
                         <Text style={{ color: '#fff', fontWeight: 'bold',marginLeft:10 }}>Iniciar sesion con Facebook</Text>
                     </TouchableOpacity>

@@ -12,6 +12,8 @@ import Buscar from './screens/Buscar'
 import Invitaciones from './screens/Invitaciones'
 import Registro from './screens/Registro'
 import RegistroDetalle from './screens/RegistroDetalle'
+import Splash from './screens/Splash'
+
 const Main = TabNavigator({
   home: {
     screen: Home,
@@ -50,6 +52,9 @@ const Main = TabNavigator({
 
 const App = StackNavigator(
   {
+    splash: {
+      screen: Splash,
+    },
     registroMain: {
       screen: RegistroPrincipal,
     },
@@ -67,7 +72,7 @@ const App = StackNavigator(
     },
   },
   {
-    initialRouteName: 'registroMain',
+    initialRouteName: 'splash',
     //headerMode: 'none',
     /*
    * Use modal on iOS because the card mode comes from the right,
@@ -75,6 +80,7 @@ const App = StackNavigator(
    */
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
   });
+  
 
 
 export default App;

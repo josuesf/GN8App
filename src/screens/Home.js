@@ -26,7 +26,7 @@ const instructions = Platform.select({
         'Shake or press menu button for dev menu',
 });
 
-export default class CodigoQR extends Component<{}> {
+export default class Home extends Component<{}> {
     static navigationOptions = {
         title: 'Home',
         headerTintColor: 'purple',
