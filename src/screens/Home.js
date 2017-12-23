@@ -34,7 +34,7 @@ export default class Home extends Component<{}> {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconMaterial
-                name={focused ? 'home' : 'home-outline'}
+                name={focused ? 'home-outline' : 'home-outline'}
                 size={26}
                 color={focused ? tintColor : '#d1c4e9'}
             />

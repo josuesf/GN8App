@@ -18,6 +18,7 @@ import {
     Alert,
     AsyncStorage,
 } from 'react-native';
+import {URL_WS} from '../Constantes'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 const { width, height } = Dimensions.get('window')
 import { LoginManager, AccessToken, GraphRequestManager, GraphRequest } from 'react-native-fbsdk';
@@ -61,29 +62,88 @@ export default class RegistroPrincipal extends Component<{}> {
                         alert('Intente mas luego...')
                     } else {
                         //Preguntar si este id ya fue registrado
-                        //Si no fue registrado
-                        const user_data = {
-                            id: res.id,
-                            name: res.name,
-                            first_name: res.first_name,
-                            last_name: res.last_name,
-                            email: res.email,
-                            picture: res.picture.data.url,
-                        }
-                        AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
-                            const main = NavigationActions.reset({
-                                index: 0,
-                                actions: [
-                                    NavigationActions.navigate(
-                                        {
-                                            routeName: 'registrodetalle',
-                                            params: { user: user_data.email, photoUrl: user_data.picture }
-                                        })
-                                ]
+                        const parametros = {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: res.email,
                             })
-                            this.props.navigation.dispatch(main)
-                        }).catch(err => console.log('Error'));
-                        //Si ya fue registrado
+                        }
+                        fetch(URL_WS + '/ws/isuser', parametros)
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                if (responseJson.res != "ok") {
+                                    //Si no fue registrado
+                                    const user_data = {
+                                        id: res.id,
+                                        name: res.name,
+                                        first_name: res.first_name,
+                                        last_name: res.last_name,
+                                        email: res.email,
+                                        picture: 'https://graph.facebook.com/' + res.id + '/picture?height=200&width=200' //res.picture.data.url,
+                                        //https://graph.facebook.com/1501027589955221/picture?height=350&width=250
+                                    }
+                                    if (res.email != null && res.email != "") {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'registrodetalle',
+                                                        params: { user: user_data.email, photoUrl: user_data.picture, nombre: res.name }
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    } else {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'registro',
+                                                        params: { user: user_data.email, photoUrl: user_data.picture }
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    }
+                                } else {
+                                    //Si ya fue registrado
+                                    const user = responseJson.user
+                                    const user_data = {
+                                        id: user.id,
+                                        username: user.username,
+                                        name: user.name,
+                                        email: user.email,
+                                        password: user.password,
+                                        photo_url: user.photo_url,
+                                    }
+                                    AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'main',
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    }).catch(err => console.log('Error'));
+
+                                }
+                            })
+                            .catch((error) => {
+                                alert(error);
+                            });
+
+
+
+
                     }
 
                 });

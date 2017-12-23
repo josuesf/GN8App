@@ -32,7 +32,7 @@ export default class Perfil extends Component<{}> {
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
             <IconMaterial
-                name={focused ? 'account' : 'account-outline'}
+                name={focused ? 'account-outline' : 'account-outline'}
                 size={25}
                 color={focused ? tintColor : '#d1c4e9'}
             />

@@ -15,7 +15,10 @@ import {
     Dimensions,
     StatusBar,
     Image, Keyboard,
+    ActivityIndicator,
+    AsyncStorage,
 } from 'react-native';
+import {URL_WS} from '../Constantes'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NavigationActions } from 'react-navigation'
 import FBSDK, {
@@ -23,7 +26,7 @@ import FBSDK, {
     AccessToken,
     LoginManager,
     GraphRequestManager, GraphRequest,
-  } from 'react-native-fbsdk'
+} from 'react-native-fbsdk'
 const { width, height } = Dimensions.get('window')
 export default class Login extends Component<{}> {
     static navigationOptions = {
@@ -32,12 +35,15 @@ export default class Login extends Component<{}> {
     state = {
         scanning: true,
         resultado: '',
-        username: '',
+        email: '',
         password: '',
+        errorLogin:false,
+        cargando:false
     }
-    loginFB=()=>{
-        LoginManager.logInWithReadPermissions(['public_profile','email']).then(function(result){
-            if(result.isCancelled){
+    loginFB = () => {
+        this.setState({ progressVisible: true })
+        LoginManager.logInWithReadPermissions(['public_profile', 'email']).then((result) => {
+            if (result.isCancelled) {
                 console.log('loging cancelled')
             }
             else {
@@ -46,26 +52,163 @@ export default class Login extends Component<{}> {
                 const infoRequest = new GraphRequest('/me', {
                     parameters: {
                         'fields': {
-                            'string' : 'email,first_name,last_name,picture'
+                            'string': 'email,first_name,last_name,picture,name'
                         }
                     }
                 }, (err, res) => {
-                    console.log(err, res);
+                    if (err) {
+                        this.setState({ progressVisible: false })
+                        alert('Intente mas luego...')
+                    } else {
+                        //Preguntar si este id ya fue registrado
+                        const parametros = {
+                            method: 'POST',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: res.email,
+                            })
+                        }
+                        fetch(URL_WS + '/ws/isuser', parametros)
+                            .then((response) => response.json())
+                            .then((responseJson) => {
+                                if (responseJson.res != "ok") {
+                                    //Si no fue registrado
+                                    const user_data = {
+                                        id: res.id,
+                                        name: res.name,
+                                        first_name: res.first_name,
+                                        last_name: res.last_name,
+                                        email: res.email,
+                                        picture: 'https://graph.facebook.com/' + res.id + '/picture?height=200&width=200' //res.picture.data.url,
+                                        //https://graph.facebook.com/1501027589955221/picture?height=350&width=250
+                                    }
+                                    if (res.email != null && res.email != "") {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'registrodetalle',
+                                                        params: { user: user_data.email, photoUrl: user_data.picture, nombre: res.name }
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    } else {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'registro',
+                                                        params: { user: user_data.email, photoUrl: user_data.picture }
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    }
+                                } else {
+                                    //Si ya fue registrado
+                                    const user = responseJson.user
+                                    const user_data = {
+                                        id: user.id,
+                                        username: user.username,
+                                        name: user.name,
+                                        email: user.email,
+                                        password: user.password,
+                                        photo_url: user.photo_url,
+                                    }
+                                    AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
+                                        const main = NavigationActions.reset({
+                                            index: 0,
+                                            actions: [
+                                                NavigationActions.navigate(
+                                                    {
+                                                        routeName: 'main',
+                                                    })
+                                            ]
+                                        })
+                                        this.props.navigation.dispatch(main)
+                                    }).catch(err => console.log('Error'));
+
+                                }
+                            })
+                            .catch((error) => {
+                                alert(error);
+                            });
+
+
+
+
+                    }
+
                 });
                 new GraphRequestManager().addRequest(infoRequest).start();
 
             }
-        }, function(error){
-            console.log('An error occured: ' + error)
+        }, (error) => {
+
+            this.setState({ progressVisible: false })
+            Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
         })
+    }
+    login = () => {
+        this.setState({cargando:true})
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: (this.state.email).toLocaleLowerCase().trim(),
+                password:this.state.password
+            })
+        }
+        fetch(URL_WS + '/ws/signin', parametros)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if (responseJson.res == 'ok') {
+                    const user = responseJson.user
+                    const user_data = {
+                        id: user.id,
+                        username: user.username,
+                        name: user.name,
+                        email: user.email,
+                        password: user.password,
+                        photo_url: user.photo_url,
+                    }
+                    AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
+                        const main = NavigationActions.reset({
+                            index: 0,
+                            actions: [
+                                NavigationActions.navigate(
+                                    {
+                                        routeName: 'main',
+                                    })
+                            ]
+                        })
+                        this.props.navigation.dispatch(main)
+                    }).catch(err => console.log('Error'));
+                } else {
+                    this.setState({errorLogin:true})
+                }
+                this.setState({cargando:false})
+            })
+            .catch((error) => {
+                alert(error);
+            });
     }
     render() {
         const resetAction = NavigationActions.reset({
             index: 0,
             actions: [
-              NavigationActions.navigate({ routeName: 'registroMain'})
+                NavigationActions.navigate({ routeName: 'registroMain' })
             ]
-          })
+        })
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
@@ -74,19 +217,30 @@ export default class Login extends Component<{}> {
 
                 </View>
                 <View style={{ height: height / 3 }}>
-                    <View style={{ borderWidth: 1, borderRadius: 5,height:40, borderColor: '#e0e0e0',
-                     backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
-                     justifyContent:'center',height:50 }}>
-                        <TextInput onChangeText={(text) => this.setState({ username: text })}
-                            placeholder="Usuario" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
+
+                    {this.state.errorLogin && <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                        <Text style={{ color: 'red' }}>Verifique su correo y contrasena</Text>
+                    </View>}
+                    {this.state.cargando && <View style={{padding: 10, marginBottom: 10}}>
+                        <ActivityIndicator size="large" color="#9575cd" />
+                    </View>}
+                    <View style={{
+                        borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#e0e0e0',
+                        backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                        justifyContent: 'center', height: 50
+                    }}>
+                        <TextInput onChangeText={(text) => this.setState({ email: text })}
+                            placeholder="Email" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0', 
-                    backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
-                    justifyContent:'center',height:50 }}>
+                    <View style={{
+                        borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0',
+                        backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
+                        justifyContent: 'center', height: 50
+                    }}>
                         <TextInput onChangeText={(text) => this.setState({ password: text })}
                             secureTextEntry={true} placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
-                    {(this.state.username.length == 0 || this.state.password.length == 0) &&
+                    {(this.state.email.length == 0 || this.state.password.length == 0) &&
                         <View style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
@@ -94,24 +248,24 @@ export default class Login extends Component<{}> {
                             <Text style={{ color: '#d1c4e9', fontWeight: 'bold' }}>INICIAR SESION</Text>
                         </View>
                     }
-                    {this.state.username.length > 0 && this.state.password.length > 0 &&
+                    {this.state.email.length > 0 && this.state.password.length > 0 &&
                         <TouchableOpacity activeOpacity={0.8}
                             style={{
                                 borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
                                 width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                             }}
-                            onPress={() => { Keyboard.dismiss(); navigate('main'); }}>
+                            onPress={this.login}>
                             <Text style={{ color: '#fff', fontWeight: 'bold' }}>INICIAR SESION</Text>
                         </TouchableOpacity>}
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
                             borderWidth: 1, borderRadius: 5, borderColor: '#3b5998', backgroundColor: '#3b5998',
-                            width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10,flexDirection:'row',
-                            alignItems:'center',justifyContent:'center'
+                            width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
+                            alignItems: 'center', justifyContent: 'center'
                         }}
-                        onPress={() =>  this.loginFB()}>
+                        onPress={() => this.loginFB()}>
                         <Icon name='facebook-box' color='white' size={20} />
-                        <Text style={{ color: '#fff', fontWeight: 'bold',marginLeft:10 }}>Iniciar sesion con Facebook</Text>
+                        <Text style={{ color: '#fff', fontWeight: 'bold', marginLeft: 10 }}>Iniciar sesion con Facebook</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ height: height / 4 }}>
