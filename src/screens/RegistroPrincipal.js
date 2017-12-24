@@ -18,7 +18,7 @@ import {
     Alert,
     AsyncStorage,
 } from 'react-native';
-import {URL_WS} from '../Constantes'
+import { URL_WS } from '../Constantes'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 const { width, height } = Dimensions.get('window')
 import { LoginManager, AccessToken, GraphRequestManager, GraphRequest } from 'react-native-fbsdk';
@@ -138,7 +138,8 @@ export default class RegistroPrincipal extends Component<{}> {
                                 }
                             })
                             .catch((error) => {
-                                alert(error);
+                                this.setState({ progressVisible: false })
+                                Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
                             });
 
 
@@ -161,14 +162,23 @@ export default class RegistroPrincipal extends Component<{}> {
         return (
             <View style={styles.container}>
                 <StatusBar backgroundColor="black" barStyle="light-content" />
-                <View style={{ height: height / 3 }}>
-
+                <View style={{ height: height / 3, justifyContent: 'center' }}>
+                    <Text style={{
+                        color: '#d1c4e9', fontWeight: 'bold',
+                        fontSize: 40
+                    }}>GN8</Text>
                 </View>
                 <View style={{ height: height / 3, alignItems: 'center' }}>
 
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#3b5998', backgroundColor: '#3b5998',
+                            shadowOffset: {
+                                width: 5,
+                                height: 5,
+                            },
+                            shadowColor: 'black',
+                            shadowOpacity: 0.4,elevation: 5,
+                            borderWidth: 1, borderRadius: 2, borderColor: '#4090db', backgroundColor: '#4090db',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
                             alignItems: 'center', justifyContent: 'center'
                         }}
@@ -196,7 +206,7 @@ export default class RegistroPrincipal extends Component<{}> {
                     <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', padding: 15, borderTopWidth: 1, borderColor: '#e0e0e0', width, marginTop: height / 4 - 35 }}>
                         <Text style={{ color: '#9e9e9e' }} >¿Ya tienes una cuenta? </Text>
                         <TouchableOpacity onPress={() => navigate('login')}>
-                            <Text style={{ color: '#d1c4e9' }}>Iniciar </Text>
+                            <Text style={{ color: '#d1c4e9' }}>Iniciar Sesion</Text>
                         </TouchableOpacity>
 
                     </View>

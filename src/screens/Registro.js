@@ -16,6 +16,7 @@ import {
     TouchableOpacity,
     Keyboard,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import { URL_WS } from '../Constantes'
 const { width, height } = Dimensions.get('window')
@@ -31,6 +32,7 @@ export default class Registro extends Component<{}> {
         cargando: false
     }
     VerificarUsuario = () => {
+        Keyboard.dismiss()
         this.setState({ cargando: true })
         const parametros = {
             method: 'POST',
@@ -67,14 +69,18 @@ export default class Registro extends Component<{}> {
                 }
                 this.setState({ cargando: false })
             })
-            .catch(err => alert(err))
+            .catch((error) => {
+                this.setState({ cargando: false })
+                Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
+
+            });
     }
     render() {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
                 <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 30 }}>
-                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 20 }}>Ingresa tu correo, nombre y contrasena</Text>
+                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 20,fontWeight:'bold' }}>Ingresa tu correo y nombre</Text>
                 </View>
                 {this.state.errorUsuario && <View style={{ alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'red' }}>Este usuario ya existe,intente con otro</Text>
@@ -83,16 +89,17 @@ export default class Registro extends Component<{}> {
                     <ActivityIndicator size="large" color="#9575cd" />
                 </View>}
                 <View style={{
-                    borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0',
+                    borderWidth: 1, borderRadius: 2, borderColor: '#e0e0e0',
                     backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
                     justifyContent: 'center', height: 50
                 }}>
-                    <TextInput onChangeText={(text) => this.setState({ correo: text })}
+                    <TextInput autoCapitalize="none"
+                        onChangeText={(text) => this.setState({ correo: text })}
                         placeholder="Correo" placeholderTextColor="#9e9e9e"
                         underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
                 <View style={{
-                    borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0',
+                    borderWidth: 1, borderRadius: 2, borderColor: '#e0e0e0',
                     backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
                     justifyContent: 'center', height: 50
                 }}>
@@ -102,7 +109,8 @@ export default class Registro extends Component<{}> {
 
                 {(this.state.correo.length == 0 || this.state.nombre.length == 0) &&
                     <View style={{
-                        borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
+                        
+                        borderWidth: 1, borderRadius: 2, borderColor: '#d1c4e9',
                         width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                     }}
                     >
@@ -111,8 +119,15 @@ export default class Registro extends Component<{}> {
                 }
                 {this.state.correo.length > 0 && this.state.nombre.length > 0 &&
                     <TouchableOpacity activeOpacity={0.8}
+                        disabled={this.state.cargando}
                         style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
+                            shadowOffset: {
+                                width: 5,
+                                height: 5,
+                            },
+                            shadowColor: 'black',
+                            shadowOpacity: 0.4,elevation: 5,
+                            borderWidth: 1, borderRadius: 2, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                         onPress={this.VerificarUsuario}>

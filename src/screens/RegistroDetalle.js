@@ -18,11 +18,13 @@ import {
     Image,
     AsyncStorage,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 const { width, height } = Dimensions.get('window')
-import {URL_WS} from '../Constantes'
+import { URL_WS } from '../Constantes'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation'
+import ImagePicker from 'react-native-image-picker';
 
 export default class RegistroDetalle extends Component<{}> {
     static navigationOptions = {
@@ -36,8 +38,10 @@ export default class RegistroDetalle extends Component<{}> {
             usuario: '',
             photoUrl: '',
             password: '',
-            cargando:false,
-            errorUsuario:false,
+            cargando: false,
+            errorUsuario: false,
+            avatarSource: null,
+            videoSource: null
         }
     }
     componentWillMount() {
@@ -50,7 +54,8 @@ export default class RegistroDetalle extends Component<{}> {
         })
     }
     RegistrarUsuario = () => {
-        this.setState({cargando:true})
+        Keyboard.dismiss()
+        this.setState({ cargando: true })
         const parametros = {
             method: 'POST',
             headers: {
@@ -62,22 +67,22 @@ export default class RegistroDetalle extends Component<{}> {
                 username: (this.state.usuario).toLocaleLowerCase().trim(),
                 email: (this.state.correo).toLocaleLowerCase().trim(),
                 password: this.state.password,
-                photo_url:this.state.photoUrl,
+                photo_url: this.state.photoUrl,
             })
         }
-        fetch(URL_WS+'/ws/signup', parametros)
+        fetch(URL_WS + '/ws/signup', parametros)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson)
                 if (responseJson.res == "ok") {
-                    const user=responseJson.user
+                    const user = responseJson.user
                     const user_data = {
                         id: user.id,
-                        username:user.username,
+                        username: user.username,
                         name: user.name,
                         email: user.email,
-                        password:user.password,
-                        photo_url:user.photo_url,
+                        password: user.password,
+                        photo_url: user.photo_url,
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         const main = NavigationActions.reset({
@@ -92,71 +97,79 @@ export default class RegistroDetalle extends Component<{}> {
                         this.props.navigation.dispatch(main)
                     }).catch(err => console.log('Error'));
                 } else {
-                    this.setState({errorUsuario:true})
+                    this.setState({ errorUsuario: true })
                 }
-                this.setState({cargando:false})
+                this.setState({ cargando: false })
                 Keyboard.dismiss();
 
             })
             .catch((error) => {
-                alert(error);
+                this.setState({ cargando: false })
+                Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
             });
     }
+    
     render() {
         const { navigate, state } = this.props.navigation;
 
         const photo = state.params.photoUrl && state.params.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: state.params.photoUrl }} style={{ height: 100, width: 100 }} resizeMode="contain" />
+            <Image source={{ uri: state.params.photoUrl }} style={{borderRadius:75, height: 150, width: 150 }} resizeMode="contain" />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
         return (
             <View style={styles.container}>
-                <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
-                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 20 }}>PUEDES CAMBIAR DE FOTO</Text>
-                </View>
-                <TouchableOpacity activeOpacity={0.8}
-                    style={{
-                        width: width - 50, padding: 15, alignItems: 'center', marginBottom: 20
-                    }}
-                    onPress={() => { Keyboard.dismiss(); navigate('main'); }}>
-                    {photo}
-                </TouchableOpacity>
+                
                 <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 20 }}>
-                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>CREAR NOMBRE DE USUARIO</Text>
-                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 15 }}>Agrega un nombre de usuario.</Text>
+                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 15,fontWeight:'bold' }}>Agrega un nombre de usuario.</Text>
                 </View>
-                {this.state.errorUsuario &&<View style={{ alignItems: 'center', marginBottom: 10 }}>
-                        <Text style={{ color: 'red' }}>Este usuario ya existe,intente con otro</Text>
-                    </View>}
-                {this.state.cargando && <View style={{padding: 10, marginBottom: 10}}>
-                        <ActivityIndicator size="large" color="#9575cd" />
-                    </View>}
-                <View style={{ borderWidth: 1, borderRadius: 5, height: 50, justifyContent: 'center', borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10 }}>
-                    <TextInput onChangeText={(text) => this.setState({ usuario: text })}
-                        value={this.state.usuario}
+                {this.state.errorUsuario && <View style={{ alignItems: 'center', marginBottom: 10 }}>
+                    <Text style={{ color: 'red' }}>Este usuario ya existe,intente con otro</Text>
+                </View>}
+                {this.state.cargando && <View style={{ padding: 10, marginBottom: 10 }}>
+                    <ActivityIndicator size="large" color="#9575cd" />
+                </View>}
+                <View style={{
+                    borderWidth: 1, borderRadius: 2, height: 50, justifyContent: 'center',
+                    borderColor: '#e0e0e0', backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5,
+                    marginBottom: 10
+                }}>
+
+                    <TextInput
+                        onChangeText={(text) => this.setState({ usuario: text })}
+                        value={this.state.usuario} autoCapitalize="none"
                         placeholder="Usuario" placeholderTextColor="#9e9e9e"
                         underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
+                <Text style={{ color: '#bdc3c7' }}>Debes tener al menos 6 caracteres en tu clave.</Text>
                 <View style={{
-                    borderWidth: 1, borderRadius: 5, borderColor: '#e0e0e0',
+                    borderWidth: 1, borderRadius: 2, borderColor: '#e0e0e0',
                     backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
                     justifyContent: 'center', height: 50
                 }}>
+
                     <TextInput onChangeText={(text) => this.setState({ password: text })}
                         placeholder="Contrasena" placeholderTextColor="#9e9e9e" secureTextEntry={true} underlineColorAndroid="transparent" selectionColor='#9575cd' />
                 </View>
-                {(this.state.usuario.length == 0 || this.state.password.length < 8) &&
+
+                {(this.state.usuario.length == 0 || this.state.password.length < 6) &&
                     <View style={{
-                        borderWidth: 1, borderRadius: 5, borderColor: '#d1c4e9',
+                        borderWidth: 1, borderRadius: 2, borderColor: '#d1c4e9',
                         width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                     }}
                     >
                         <Text style={{ color: '#d1c4e9', fontWeight: 'bold' }}>CONTINUAR</Text>
                     </View>
                 }
-                {this.state.usuario.length > 0 && this.state.password.length > 7 &&
+                {this.state.usuario.length > 0 && this.state.password.length > 5 &&
                     <TouchableOpacity activeOpacity={0.8}
+                        disabled={this.state.cargando}
                         style={{
-                            borderWidth: 1, borderRadius: 5, borderColor: '#9575cd', backgroundColor: '#9575cd',
+                            shadowOffset: {
+                                width: 5,
+                                height: 5,
+                            },
+                            shadowColor: 'black',
+                            shadowOpacity: 0.4, elevation: 5,
+                            borderWidth: 1, borderRadius: 2, borderColor: '#9575cd', backgroundColor: '#9575cd',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10
                         }}
                         onPress={this.RegistrarUsuario}>
@@ -174,4 +187,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    
 });
