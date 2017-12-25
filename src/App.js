@@ -13,6 +13,8 @@ import Invitaciones from './screens/Invitaciones'
 import Registro from './screens/Registro'
 import RegistroDetalle from './screens/RegistroDetalle'
 import Splash from './screens/Splash'
+import EditarPerfil from './screens/EditarPerfil';
+import RegistroEmpresa from './screens/RegistroEmpresa';
 
 const Main = TabNavigator({
   home: {
@@ -34,6 +36,7 @@ const Main = TabNavigator({
 }, {
     tabBarPosition: 'bottom',
     animationEnabled: true,
+    swipeEnabled:false,
     tabBarOptions: {
       activeTintColor: '#831DA2',
       labelStyle: {
@@ -70,6 +73,12 @@ const App = StackNavigator(
     registrodetalle: {
       screen: RegistroDetalle,
     },
+    editPerfil:{
+      screen: EditarPerfil
+    },
+    registroEmpresa:{
+      screen:RegistroEmpresa
+    }
   },
   {
     initialRouteName: 'splash',

@@ -22,14 +22,14 @@ export default class EmpresaBox extends Component {
         return (
             <View ref="root" style={styles.container}>
                 <View style={{flexDirection:'row',alignItems:'center',marginBottom:10,marginTop:5,padding:5}}>
-                    <Image source={{ uri: this.props.empresa.avatar }}
+                    <Image source={{ uri: this.props.empresa.photo_url }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
                     
                 </View>
-                <Text style={{marginLeft:5,color:'#424242',fontWeight:'bold'}}>{this.props.empresa.nombre}</Text>
+                <Text style={{marginLeft:5,color:'#424242',fontWeight:'bold'}}>{this.props.empresa.name}</Text>
                 <View style={{flexDirection:'row',width:width/3+10,alignItems:'center',padding:10}}>
-                    <Icon name="ios-heart" size={30} color="#ab47bc" style={{marginRight:5}}/>
-                    <Text style={{fontSize:10,fontWeight:'bold',color:'#9e9e9e'}}>a ti, josuesfl y 10 personas les encanta</Text>
+                    <IconMaterial name="emoticon-cool" size={30} color="#ab47bc" style={{marginRight:5}}/>
+                    <Text style={{fontSize:10,fontWeight:'bold',color:'#9e9e9e'}}>{"A 10 personas les parece genial"}</Text>
                     
                 </View>
                 <View style={{flexDirection:'column',marginBottom:10,padding:5}}>
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         shadowColor: 'black',
         shadowOpacity: .2,
+        elevation:2,
         margin: 3,
         width: width/2-6
     },

@@ -40,6 +40,9 @@ export default class RegistroPrincipal extends Component<{}> {
         }
     }
 
+    registrarEmpresa=()=>{
+        this.props.navigation.navigate('registroEmpresa')
+    }
 
     loginFB = () => {
         this.setState({ progressVisible: true })
@@ -93,7 +96,12 @@ export default class RegistroPrincipal extends Component<{}> {
                                                 NavigationActions.navigate(
                                                     {
                                                         routeName: 'registrodetalle',
-                                                        params: { user: user_data.email, photoUrl: user_data.picture, nombre: res.name }
+                                                        params: { 
+                                                            user: user_data.email, 
+                                                            photoUrl: user_data.picture, 
+                                                            nombre: res.name,
+                                                            esEmpresa: 'NO',
+                                                         }
                                                     })
                                             ]
                                         })
@@ -170,6 +178,7 @@ export default class RegistroPrincipal extends Component<{}> {
                 </View>
                 <View style={{ height: height / 3, alignItems: 'center' }}>
 
+                    
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
                             shadowOffset: {
@@ -186,6 +195,22 @@ export default class RegistroPrincipal extends Component<{}> {
                         <Icon name='facebook-box' color='white' size={20} />
                         <Text style={{ color: '#fff', fontWeight: 'bold', marginLeft: 10 }}>Iniciar sesion con Facebook</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.8}
+                        style={{
+                            shadowOffset: {
+                                width: 5,
+                                height: 5,
+                            },
+                            shadowColor: 'black',
+                            shadowOpacity: 0.4,elevation: 5,
+                            borderWidth: 1, borderRadius: 2, borderColor: '#FFF', backgroundColor: '#FFF',
+                            width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
+                            alignItems: 'center', justifyContent: 'center'
+                        }}
+                        onPress={this.registrarEmpresa}>
+                        <Text style={{ color: '#333', fontWeight: 'bold', marginLeft: 10 }}>SOY UNA EMPRESA</Text>
+                    </TouchableOpacity>
+                    
                     <ProgressDialog
                         visible={this.state.progressVisible}
                         title="Conectando"

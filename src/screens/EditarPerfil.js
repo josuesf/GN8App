@@ -33,7 +33,7 @@ import {
     LoginManager,
 } from 'react-native-fbsdk'
 const { width, height } = Dimensions.get('window')
-export default class Perfil extends Component<{}> {
+export default class EditarPerfil extends Component<{}> {
     static navigationOptions = {
         title: 'Home',
         headerTintColor: 'purple',
@@ -62,7 +62,7 @@ export default class Perfil extends Component<{}> {
             dataImg: null,
         }
     }
-    recuperarDatosUsuario=()=>{
+    componentWillMount() {
         AsyncStorage.getItem("USER_DATA", (err, res) => {
             if (res != null) {
                 res = JSON.parse(res)
@@ -76,12 +76,6 @@ export default class Perfil extends Component<{}> {
                 })
             }
         })
-    }
-    componentWillMount() {
-        this.recuperarDatosUsuario()
-    }
-    componentDidMount(){
-        store.subscribe(this.recuperarDatosUsuario)
     }
     cerrarSesion = () => {
         AsyncStorage.removeItem("USER_DATA", err => {
@@ -113,6 +107,9 @@ export default class Perfil extends Component<{}> {
         };
 
         ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+
             if (response.didCancel) {
                 console.log('User cancelled photo picker');
             }
@@ -124,8 +121,10 @@ export default class Perfil extends Component<{}> {
             }
             else {
                 let source = { uri: response.uri };
+
                 // You can also display the image using data:
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
                 this.setState({
                     avatarSource: source,
                     dataImg: response.data
@@ -187,7 +186,8 @@ export default class Perfil extends Component<{}> {
                         photo_url: user.photo_url,
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
-                        this.setState({ cargando: false, photoUrl: user_data.photo_url, avatarSource: null, })
+                        this.setState({ cargando: false })
+                        
                     }).catch(err => console.log('Error'));
                 } else {
                     this.setState({ cargando: false })
@@ -195,33 +195,85 @@ export default class Perfil extends Component<{}> {
                 }
             })
             .catch(err => {
-                this.setState({ cargando: false, avatarSource: null, })
-                Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo, compruebe su conexion a internet")
+                this.setState({ cargando: false,avatarSource:null })
+                Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo")
             })
 
 
 
     }
+    guardarCambios = () => {
+        this.setState({ cargando: true })
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id:this.state.id,
+                name: this.state.nombre,
+                username: (this.state.usuario).toLocaleLowerCase().trim(),
+                email: (this.state.correo).toLocaleLowerCase().trim(),
+                password: this.state.password,
+                photo_url: this.state.photoUrl,
+            })
+        }
+        fetch(URL_WS + '/ws/updateUser', parametros)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            console.log(responseJson)
+            if (responseJson.res == "ok") {
+                const user = responseJson.user
+                    const user_data = {
+                        id: user.id,
+                        username: user.username,
+                        name: user.name,
+                        email: user.email,
+                        password: user.password,
+                        photo_url: user.photo_url,
+                    }
+                    AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
+                        this.setState({ cargando: false })
+                        store.dispatch({
+                            type: 'USER_UPDATE',
+                            user_update: true,
+                        })
+                        this.props.navigation.goBack()
+                    }).catch(err => console.log('Error'));
+                } else {
+                    this.setState({ cargando: false })
+                    Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo")
+                }
+            })
+            .catch(err => {
+                this.setState({ cargando: false })
+                Alert.alert("Error", "No se pudo actualizar")
+            })
+    }
     render() {
-        const { navigate } = this.props.navigation;
+        const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
             <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (
             <View style={styles.container}>
-                <Toolbar navigation={navigate} banner={"Perfil"} />
+                <View style={styles.toolbar} >
+                    <TouchableOpacity onPress={() => goBack()}
+                        style={{ marginRight: 10, alignItems: 'center' }}>
+                        <IconMaterial name={'arrow-left'} size={30} color={'#616161'} />
+                    </TouchableOpacity>
+                    <Text style={{ fontWeight: '900', fontSize: 18, color: '#616161' }}>Editar Perfil</Text>
+                </View>
                 <ScrollView>
-                    <View style={{
-                        flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderBottomWidth: 1, paddingBottom: 10,
-                        backgroundColor: '#fafafa', borderColor: '#e0e0e0'
-                    }}>
+                    <View style={styles.container}>
                         {this.state.cargando &&
-                            <ActivityIndicator style={{ marginTop: 20, alignSelf: 'center' }} size="large" color={"#9575cd"} />}
+                            <ActivityIndicator style={{ marginTop: 20 }} size="large" color={"#9575cd"} />}
 
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                        <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginBottom: 30 }}>
 
-                            {!this.state.cargando && <TouchableOpacity activeOpacity={0.8}
+                            <TouchableOpacity activeOpacity={0.8}
                                 style={{
                                     padding: 0, marginTop: 10,
 
@@ -230,23 +282,40 @@ export default class Perfil extends Component<{}> {
                                 {this.state.avatarSource && <Image style={styles.avatar} source={this.state.avatarSource} />}
                                 {!this.state.avatarSource && photo}
 
-                            </TouchableOpacity>}
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: 'column',marginLeft:20, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={{ color: '#333', fontWeight: '900', }}>{this.state.nombre}</Text>
-                            <Text style={{ color: '#BDBDBD' }}>{this.state.usuario}</Text>
-                            <TouchableOpacity 
-                                onPress={()=>navigate('editPerfil')}
-                                style={{ marginTop: 10 }}>
-                                <Text style={{ color: '#9b59b6', fontWeight: 'bold' }}>Editar Perfil</Text>
+                        <View style={styles.boxInput}>
+                            <Text style={styles.labelDato}>Nombre</Text>
+                            <TextInput onChangeText={(text) => this.setState({ nombre: text })} value={this.state.nombre} placeholder="Nombre Completo" />
+                        </View>
+                        <View style={styles.boxInput}>
+                            <Text style={styles.labelDato}>Usuario</Text>
+                            <TextInput onChangeText={(text) => this.setState({ usuario: text })} value={this.state.usuario} placeholder="Usuario de Registro" editable={false} />
+                        </View>
+                        <View style={styles.boxInput}>
+                            <Text style={styles.labelDato}>Correo</Text>
+                            <TextInput onChangeText={(text) => this.setState({ correo: text })} value={this.state.correo} placeholder="Correo de registro" editable={false} />
+                        </View>
+
+                        <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginTop: 50, marginBottom: 50 }}>
+                            <TouchableOpacity onPress={this.guardarCambios}
+                                activeOpacity={0.8} style={styles.botonGuardar}>
+                                <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Guardar Cambios</Text>
                             </TouchableOpacity>
                         </View>
 
-                    </View>
-                    <View style={{ flexDirection: 'row', width, }}>
 
                     </View>
-
+                    <TouchableOpacity activeOpacity={0.8}
+                        style={{
+                            backgroundColor: '#FFF',
+                            width: width, padding: 15, alignItems: 'center', marginBottom: 0,
+                            flexDirection: 'row',
+                            alignSelf: 'center', justifyContent: 'center'
+                        }}
+                        onPress={this.cerrarSesion}>
+                        <Text style={{ color: '#CE5F63' }}>Cerrar Sesion</Text>
+                    </TouchableOpacity>
                 </ScrollView>
             </View>
         );
@@ -259,8 +328,32 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     avatar: {
-        borderRadius: 50,
+        borderRadius: 10,
         width: 100,
         height: 100
+    },
+    toolbar: {
+        width, backgroundColor: '#fcfcfc',
+        flexDirection: 'row', elevation: 1.5,
+        height: 50, alignItems: 'center',
+        ...Platform.select({
+            ios: {
+                borderBottomWidth: 0.5, marginTop: 10, borderColor: '#bdc3c7',
+            },
+        }),
+    },
+    inputDato: { fontWeight: '900', marginBottom: 10 },
+    labelDato: { fontWeight: '900', marginBottom: 10 },
+    boxInput: { margin: 10 },
+    botonGuardar: {
+        shadowOffset: {
+            width: 5,
+            height: 5,
+        },
+        shadowColor: 'black',
+        shadowOpacity: 0.4, elevation: 5,
+        borderWidth: 1, borderRadius: 2, borderColor: '#9b59b6', backgroundColor: '#9b59b6',
+        width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
+        alignItems: 'center', justifyContent: 'center'
     }
 });

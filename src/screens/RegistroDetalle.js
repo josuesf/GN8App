@@ -25,6 +25,7 @@ import { URL_WS } from '../Constantes'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation'
 import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob'
 
 export default class RegistroDetalle extends Component<{}> {
     static navigationOptions = {
@@ -38,6 +39,9 @@ export default class RegistroDetalle extends Component<{}> {
             usuario: '',
             photoUrl: '',
             password: '',
+            direccion:'',
+            dataImg:'',
+            telefono:'',
             cargando: false,
             errorUsuario: false,
             avatarSource: null,
@@ -46,16 +50,27 @@ export default class RegistroDetalle extends Component<{}> {
     }
     componentWillMount() {
         const { state } = this.props.navigation;
-        this.setState({
-            usuario: state.params.user.split("@")[0],
-            photoUrl: state.params.photoUrl,
-            correo: state.params.user,
-            nombre: state.params.nombre,
-        })
+        if (state.params.esEmpresa!="SI")
+            this.setState({
+                usuario: state.params.user.split("@")[0],
+                photoUrl: state.params.photoUrl,
+                correo: state.params.user,
+                nombre: state.params.nombre,
+                esEmpresa:"NO"
+            })
+        else
+            this.setState({
+                usuario: state.params.user.split("@")[0],
+                photoUrl: state.params.photoUrl,
+                correo: state.params.user,
+                nombre: state.params.nombre,
+                direccion: state.params.direccion,
+                dataImg: state.params.dataImg,
+                telefono: state.params.telefono,
+                esEmpresa:"SI"
+            })
     }
-    RegistrarUsuario = () => {
-        Keyboard.dismiss()
-        this.setState({ cargando: true })
+    RegistrarUsuarioComun=()=>{
         const parametros = {
             method: 'POST',
             headers: {
@@ -68,8 +83,10 @@ export default class RegistroDetalle extends Component<{}> {
                 email: (this.state.correo).toLocaleLowerCase().trim(),
                 password: this.state.password,
                 photo_url: this.state.photoUrl,
+                es_empresa: this.state.esEmpresa,
             })
         }
+        console.log(parametros)
         fetch(URL_WS + '/ws/signup', parametros)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -83,6 +100,7 @@ export default class RegistroDetalle extends Component<{}> {
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
+                        es_empresa:user.es_empresa,
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         const main = NavigationActions.reset({
@@ -108,18 +126,86 @@ export default class RegistroDetalle extends Component<{}> {
                 Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
             });
     }
-    
+    RegistrarUsuarioEmpresa=()=>{
+        const data = [
+            { name: 'name', data: this.state.nombre },
+            { name: 'username', data: (this.state.usuario).toLocaleLowerCase().trim() },
+            { name: 'email', data: (this.state.correo).toLocaleLowerCase().trim() },
+            { name: 'password', data: this.state.password },
+            { name: 'telefono', data: this.state.telefono },
+            { name: 'direccion', data: this.state.direccion },
+            { name: 'es_empresa', data: "SI" },
+            { name: 'photo_url', filename: 'avatar.png', data: this.state.dataImg }
+        ]
+        console.log(data)
+        RNFetchBlob.fetch('POST', URL_WS + "/ws/signupEmpresa", {
+            Authorization: "Bearer access-token",
+            otherHeader: "foo",
+            'Content-Type': 'multipart/form-data',
+        }, data)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                if (responseJson.res == "ok") {
+                    const user = responseJson.user
+                    const user_data = {
+                        id: user.id,
+                        username: user.username,
+                        name: user.name,
+                        email: user.email,
+                        password: user.password,
+                        photo_url: user.photo_url,
+                        es_empresa:user.es_empresa,
+                        direccion:user.direccion,
+                        telefono:user.telefono,
+
+                    }
+                    AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
+                        const main = NavigationActions.reset({
+                            index: 0,
+                            actions: [
+                                NavigationActions.navigate(
+                                    {
+                                        routeName: 'main',
+                                    })
+                            ]
+                        })
+                        this.props.navigation.dispatch(main)
+                    }).catch(err => console.log('Error'));
+                } else {
+                    this.setState({ errorUsuario: true })
+                }
+                this.setState({ cargando: false })
+                Keyboard.dismiss();
+
+            })
+            .catch((error) => {
+                this.setState({ cargando: false })
+                Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
+            });
+    }
+    RegistrarUsuario = () => {
+        Keyboard.dismiss()
+        this.setState({ cargando: true })
+        if(this.state.esEmpresa=="SI"){
+            this.RegistrarUsuarioEmpresa()
+        }else{
+            this.RegistrarUsuarioComun()
+        }
+        
+    }
+
     render() {
         const { navigate, state } = this.props.navigation;
 
         const photo = state.params.photoUrl && state.params.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: state.params.photoUrl }} style={{borderRadius:75, height: 150, width: 150 }} resizeMode="contain" />
+            <Image source={{ uri: state.params.photoUrl }} style={{ borderRadius: 75, height: 150, width: 150 }} resizeMode="contain" />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
         return (
             <View style={styles.container}>
-                
+
                 <View style={{ width: width - 50, paddingLeft: 5, marginBottom: 20 }}>
-                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 15,fontWeight:'bold' }}>Agrega un nombre de usuario.</Text>
+                    <Text style={{ color: '#2c3e50', textAlign: 'center', fontSize: 15, fontWeight: 'bold' }}>Agrega un nombre de usuario.</Text>
                 </View>
                 {this.state.errorUsuario && <View style={{ alignItems: 'center', marginBottom: 10 }}>
                     <Text style={{ color: 'red' }}>Este usuario ya existe,intente con otro</Text>
@@ -187,5 +273,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    
+
 });

@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconFont from 'react-native-vector-icons/FontAwesome'
 const { width, height } = Dimensions.get('window')
 const DEFAULT_AVATAR = './imgs/fg-avatar.png'
 const AVATAR_SIZE = 28
@@ -23,28 +24,50 @@ export default class PostBox extends Component {
         this.state = {
             heightImg: undefined,
             widthImg: width,
+            esGenial: false,
+            personasGenial: 0,
+            comentarios:10,
         }
-        
+
     }
     getHeight = (ulrimg) => {
         Image.getSize(ulrimg,
             (w, h) => {
-                if(this.refs.root) {
-                this.setState({ heightImg: h / (w / width) })
+                if (this.refs.root) {
+                    this.setState({ heightImg: h / (w / width) })
                 }
             },
             (error) => console.log('error'))
     }
-    componentWillMount(){
+    componentWillMount() {
         this.getHeight(this.props.post.urlImagen)
     }
+    darGenial = () => {
+        var { personasGenial, esGenial } = this.state
+        if (!esGenial) {
+            personasGenial++
+            this.setState({
+                esGenial: true,
+                personasGenial: personasGenial
+            })
+
+        } else {
+            personasGenial--
+            this.setState({
+                esGenial: false,
+                personasGenial: personasGenial
+            })
+        }
+
+    }
     render() {
+        const { esGenial, personasGenial,comentarios } = this.state
         
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
                     <Image source={{ uri: this.props.post.avatar }}
-                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,}} />
+                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, }} />
                     <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>Caos Cusco</Text>
                 </View>
                 <View style={{ alignItems: 'center', borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#e0e0e0' }}>
@@ -52,14 +75,20 @@ export default class PostBox extends Component {
                         style={{ height: this.state.heightImg, width: width }} resizeMode='contain' />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
-                    <IconMaterial name="message-outline" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
-                    <Icon name="ios-happy-outline" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
-                    <IconMaterial name="beer" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
-                    <IconMaterial name="qrcode" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
-
+                    <TouchableOpacity>
+                        <IconMaterial name="message-text-outline" size={30} color={comentarios>0?"#831DA2":"#d1c4e9"} style={{ marginRight: 15 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={this.darGenial}>
+                        <IconMaterial name="emoticon-cool" size={30} color={esGenial ? "#831DA2" : "#d1c4e9"} style={{ marginRight: 15 }} />
+                    </TouchableOpacity>
+                    {/*<IconMaterial name="beer" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />*/}
+                    <TouchableOpacity>
+                        <IconMaterial name="qrcode" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'column', marginBottom: 10, padding: 5, marginLeft: 10 }}>
-                    <Text style={{ fontSize: 12, color: '#757575' }}>Alguna descripcion</Text>
+                    {personasGenial>0 &&<Text style={{ fontSize: 12, color: '#757575' }}>{"A "+personasGenial+" gusta esta publicacion"}</Text>}
+                    {comentarios>0 &&<Text style={{ fontSize: 12, color: '#757575' }}>{comentarios+" comentarios"}</Text>}
                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9e9e9e' }}>Hace 11 horas</Text>
                 </View>
             </View>
@@ -71,7 +100,7 @@ export default class PostBox extends Component {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        
+
     },
     image: {
         width: 50,
