@@ -196,6 +196,7 @@ export default class Perfil extends Component<{}> {
             })
             .catch(err => {
                 this.setState({ cargando: false, avatarSource: null, })
+                console.log(err)
                 Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo, compruebe su conexion a internet")
             })
 
@@ -232,8 +233,8 @@ export default class Perfil extends Component<{}> {
 
                             </TouchableOpacity>}
                         </View>
-                        <View style={{ flexDirection: 'column',marginLeft:20, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={{ color: '#333', fontWeight: '900', }}>{this.state.nombre}</Text>
+                        <View style={{ flexDirection: 'column',marginLeft:20, marginBottom: 10 }}>
+                            <Text style={{ color: '#333', fontWeight: '900', width:width/2}}>{this.state.nombre}</Text>
                             <Text style={{ color: '#BDBDBD' }}>{this.state.usuario}</Text>
                             <TouchableOpacity 
                                 onPress={()=>navigate('editPerfil')}
