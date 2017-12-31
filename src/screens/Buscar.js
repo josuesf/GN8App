@@ -29,25 +29,7 @@ export default class Buscar extends Component<{}> {
         this.state = {
             buscarBox: false,
             textBusqueda: '',
-            empresas: [
-                {
-                    id: '1', nombre: 'Caos Cusco',
-                    avatar: 'https://pbs.twimg.com/profile_images/425651955805863937/kP3_xfBz_400x400.jpeg'
-                    , avatar: 'https://pbs.twimg.com/profile_images/425651955805863937/kP3_xfBz_400x400.jpeg'
-                },
-                {
-                    id: '2', nombre: 'Limbus Cusco',
-                    avatar: 'https://media-cdn.tripadvisor.com/media/photo-s/09/af/3d/1e/limbus-restobar.jpg'
-                },
-                { id: '3', nombre: 'Discoteca Changos Cusco', avatar: 'https://pbs.twimg.com/profile_images/706310053226278913/myzqJrOM.jpg' },
-                {
-                    id: '4', nombre: 'Duende Cusco',
-                    avatar: 'https://www.datosperu.org/imagenm.php?src=447322.GIF'
-                },
-                {
-                    id: '5', nombre: 'Caos Cusco',
-                    avatar: 'https://pbs.twimg.com/profile_images/425651955805863937/kP3_xfBz_400x400.jpeg'
-                }]
+            empresas: [],
         }
     }
     componentWillMount(){

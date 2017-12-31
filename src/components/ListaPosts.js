@@ -48,7 +48,7 @@ export default class ListaPosts extends Component {
                 dataSource={this.state.dataSource}
                 renderRow={(post) => {
                     return (
-                        <PostBox post={post} />
+                        <PostBox post={post} navigate={this.props.navigate} />
                     )
                 }}
             />

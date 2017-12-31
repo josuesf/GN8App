@@ -1,4 +1,5 @@
 import { createStore } from 'redux'
+import SocketIOClient from 'socket.io-client';
 
 const reducer = (state, action) => {
     if (action.type === "USER_UPDATE") {
@@ -14,4 +15,6 @@ const reducer = (state, action) => {
 export default createStore(reducer,
     {
         user_update: false,
+        // socket:SocketIOClient('https://gn8socket.herokuapp.com')
+        socket:SocketIOClient('http://localhost:8080')
     })

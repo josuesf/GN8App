@@ -15,7 +15,7 @@ import RegistroDetalle from './screens/RegistroDetalle'
 import Splash from './screens/Splash'
 import EditarPerfil from './screens/EditarPerfil';
 import RegistroEmpresa from './screens/RegistroEmpresa';
-
+import Comentarios from './screens/Comentarios'
 const Main = TabNavigator({
   home: {
     screen: Home,
@@ -78,6 +78,9 @@ const App = StackNavigator(
     },
     registroEmpresa:{
       screen:RegistroEmpresa
+    },
+    comentarios:{
+      screen:Comentarios
     }
   },
   {

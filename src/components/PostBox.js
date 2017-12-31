@@ -40,7 +40,7 @@ export default class PostBox extends Component {
             (error) => console.log('error'))
     }
     componentWillMount() {
-        this.getHeight(this.props.post.urlImagen)
+        this.getHeight(this.props.post.photo_post)
     }
     darGenial = () => {
         var { personasGenial, esGenial } = this.state
@@ -66,16 +66,16 @@ export default class PostBox extends Component {
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
-                    <Image source={{ uri: this.props.post.avatar }}
+                    <Image source={{ uri: this.props.post.photo_url }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, }} />
-                    <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>Caos Cusco</Text>
+                    <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>{this.props.post.nombre_usuario}</Text>
                 </View>
                 <View style={{ alignItems: 'center', borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#e0e0e0' }}>
-                    <Image source={{ uri: this.props.post.urlImagen }}
+                    <Image source={{ uri: this.props.post.photo_post }}
                         style={{ height: this.state.heightImg, width: width }} resizeMode='contain' />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.props.navigate('comentarios',{id_post:this.props.post._id})}>
                         <IconMaterial name="message-text-outline" size={30} color={comentarios>0?"#831DA2":"#d1c4e9"} style={{ marginRight: 15 }} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this.darGenial}>
