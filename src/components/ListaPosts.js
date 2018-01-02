@@ -5,8 +5,10 @@ import {
     TouchableOpacity,
     AsyncStorage,
     RefreshControl,
+    Alert,
 } from 'react-native';
 import PostBox from './PostBox'
+import {URL_WS_SOCKET} from '../Constantes'
 export default class ListaPosts extends Component {
     constructor(props) {
         super(props);
@@ -32,7 +34,28 @@ export default class ListaPosts extends Component {
     }
     _onRefresh() {
         this.setState({ refreshing: true });
-        this.setState({ refreshing: false });
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }
+        fetch(URL_WS_SOCKET+"/ws/posts",parametros)
+        .then(response=>response.json())
+        .then(responseJson=>{
+            if(responseJson.res=="ok"){
+                console.log(responseJson.posts)
+                this.setState({refreshing:false,dataSource: this.state.dataSource.cloneWithRows(responseJson.posts)})
+            }else{
+                this.updateDataSource(responseJson.posts)
+                this.setState({refreshing:false})
+            }
+        })
+        .catch(err=>{
+            this.setState({refreshing:false})
+            Alert.alert("Error","Ocurrio un error al recuperar los posts")
+        })
     }
     render() {
 

@@ -8,6 +8,12 @@ const reducer = (state, action) => {
             user_update: action.user_update,
         }
     }
+    if (action.type === "POST_COMMENTED") {
+        return {
+            ...state,
+            id_post_commented: action.id_post_commented,
+        }
+    }
 
     return state
 }
@@ -15,6 +21,7 @@ const reducer = (state, action) => {
 export default createStore(reducer,
     {
         user_update: false,
+        id_post_commented:null,
         // socket:SocketIOClient('https://gn8socket.herokuapp.com')
         socket:SocketIOClient('http://localhost:8080')
     })

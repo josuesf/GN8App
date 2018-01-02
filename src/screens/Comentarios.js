@@ -100,6 +100,10 @@ export default class Comentarios extends Component {
             photo_url: this.state.photoUrl,
             id_post: this.state.id_post
         }
+        store.dispatch({
+            type: 'POST_COMMENTED',
+            id_post_commented: this.state.id_post,
+        })
         this.socket.emit('message', message);
         this.setState({ text: "", comments: this.state.comments.concat(message) })
 

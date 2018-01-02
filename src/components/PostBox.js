@@ -15,6 +15,9 @@ import IconFont from 'react-native-vector-icons/FontAwesome'
 const { width, height } = Dimensions.get('window')
 const DEFAULT_AVATAR = './imgs/fg-avatar.png'
 const AVATAR_SIZE = 28
+
+import store from '../store';
+import { URL_WS_SOCKET, URL_WS } from '../Constantes'
 //const ulrimg='https://pbs.twimg.com/profile_images/495625237505916928/MO0m3zdN_400x400.jpeg'
 //const ulrimg='https://scontent.flim1-1.fna.fbcdn.net/v/t31.0-8/23551173_1439994526110419_8624743476914670849_o.png?oh=a76945d198f3f5b96f63b50d5d766089&oe=5ACBD06D'
 //const ulrimg = 'https://cdn-az.allevents.in/banners/1e4c3117bd34d35b92a889fb1b1625ae'
@@ -26,9 +29,9 @@ export default class PostBox extends Component {
             widthImg: width,
             esGenial: false,
             personasGenial: 0,
-            comentarios:10,
+            comentarios: 0,
         }
-
+        
     }
     getHeight = (ulrimg) => {
         Image.getSize(ulrimg,
@@ -39,7 +42,19 @@ export default class PostBox extends Component {
             },
             (error) => console.log('error'))
     }
+    componentDidMount(){
+        store.subscribe(()=>{
+            if(this.refs.root && store.getState().id_post_commented==this.props.post._id){
+                this.setState({comentarios:this.state.comentarios+1})
+            }
+        })
+    }
     componentWillMount() {
+        
+        this.setState({
+            personasGenial: this.props.post.likesCount,
+            comentarios: this.props.post.commentsCount
+        })
         this.getHeight(this.props.post.photo_post)
     }
     darGenial = () => {
@@ -61,8 +76,8 @@ export default class PostBox extends Component {
 
     }
     render() {
-        const { esGenial, personasGenial,comentarios } = this.state
-        
+        const { esGenial, personasGenial, comentarios } = this.state
+
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
@@ -75,8 +90,8 @@ export default class PostBox extends Component {
                         style={{ height: this.state.heightImg, width: width }} resizeMode='contain' />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
-                    <TouchableOpacity onPress={()=>this.props.navigate('comentarios',{id_post:this.props.post._id})}>
-                        <IconMaterial name="message-text-outline" size={30} color={comentarios>0?"#831DA2":"#d1c4e9"} style={{ marginRight: 15 }} />
+                    <TouchableOpacity onPress={() => this.props.navigate('comentarios', { id_post: this.props.post._id })}>
+                        <IconMaterial name="message-text-outline" size={30} color={comentarios > 0 ? "#831DA2" : "#d1c4e9"} style={{ marginRight: 15 }} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this.darGenial}>
                         <IconMaterial name="emoticon-cool" size={30} color={esGenial ? "#831DA2" : "#d1c4e9"} style={{ marginRight: 15 }} />
@@ -87,8 +102,8 @@ export default class PostBox extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'column', marginBottom: 10, padding: 5, marginLeft: 10 }}>
-                    {personasGenial>0 &&<Text style={{ fontSize: 12, color: '#757575' }}>{"A "+personasGenial+" gusta esta publicacion"}</Text>}
-                    {comentarios>0 &&<Text style={{ fontSize: 12, color: '#757575' }}>{comentarios+" comentarios"}</Text>}
+                    {personasGenial > 0 && <Text style={{ fontSize: 12, color: '#757575' }}>{"A " + personasGenial + " gusta esta publicacion"}</Text>}
+                    {comentarios > 0 && <Text style={{ fontSize: 12, color: '#757575' }}>{comentarios + " comentarios"}</Text>}
                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9e9e9e' }}>Hace 11 horas</Text>
                 </View>
             </View>
