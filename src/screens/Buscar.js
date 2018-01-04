@@ -21,6 +21,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListaEmpresas from '../components/ListaEmpresas'
+import {SearchBar } from "react-native-elements";
 import {URL_WS} from '../Constantes'
 const { width, height } = Dimensions.get('window')
 export default class Buscar extends Component<{}> {
@@ -106,7 +107,18 @@ export default class Buscar extends Component<{}> {
 
         return (
             <View style={styles.container}>
-                {toolbar}
+                <SearchBar
+                    round
+                    containerStyle={{ ...Platform.select({
+                        ios: {
+                           marginTop: 20,
+                        },
+                    }),backgroundColor:'#FFF'}}
+                    inputStyle={{backgroundColor:'#eee'}}
+                    lightTheme
+                    onChangeText={(text)=>console.log(text)}
+                    onClearText={(text)=>console.log(text)}
+                    placeholder='Buscar...' />
                 <ListaEmpresas empresas={this.state.empresas} />
 
             </View>

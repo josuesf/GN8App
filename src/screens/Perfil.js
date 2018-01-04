@@ -66,6 +66,7 @@ export default class Perfil extends Component<{}> {
         AsyncStorage.getItem("USER_DATA", (err, res) => {
             if (res != null) {
                 res = JSON.parse(res)
+                if(this.refs.perfil)
                 this.setState({
                     id: res.id,
                     correo: res.email,
@@ -210,7 +211,7 @@ export default class Perfil extends Component<{}> {
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (
-            <View style={styles.container}>
+            <View style={styles.container} ref="perfil">
                 <Toolbar navigation={navigate} banner={"Perfil"} />
                 <ScrollView>
                     <View style={{

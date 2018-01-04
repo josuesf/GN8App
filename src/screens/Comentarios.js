@@ -35,8 +35,8 @@ export default class Comentarios extends Component {
             buscandoComentarios: true,
             id_post:""
         }
-        this.socket = SocketIOClient(URL_WS_SOCKET);
-        this.socket.on('message', (data, cb) => {
+        //this.socket = SocketIOClient(URL_WS_SOCKET);
+        store.getState().socket.on('message', (data, cb) => {
             if (this.refs.comentarios)
                 this.setState({ comments: this.state.comments.concat(data) })
         });
@@ -98,19 +98,22 @@ export default class Comentarios extends Component {
             user: this.state.nombre,
             id_user: this.state.id,
             photo_url: this.state.photoUrl,
-            id_post: this.state.id_post
+            id_post: this.state.id_post,
+            createdAt:new Date(),
+            updatedAt:new Date()
         }
         store.dispatch({
             type: 'POST_COMMENTED',
             id_post_commented: this.state.id_post,
         })
-        this.socket.emit('message', message);
-        this.setState({ text: "", comments: this.state.comments.concat(message) })
+        store.getState().socket.emit('message', message);
+        // this.setState({ text: "", comments: this.state.comments.concat(message) })
+        this.setState({ text: ""})
 
     }
     componentWillUnmount() {
-        this.socket.close()
-        this.socket.disconnect()
+        //store.getState().socket.close()
+        //store.getState().socket.disconnect()
     }
     handleChangeText = (text) => this.setState({ text })
 
@@ -120,7 +123,7 @@ export default class Comentarios extends Component {
 
         return (
             <View ref="comentarios" behavior="padding" style={styles.container}>
-                {this.state.buscandoComentarios && <ActivityIndicator />}
+                {this.state.buscandoComentarios && <ActivityIndicator color="#831DA2" size="large" style={{marginTop:10}}/>}
                 <CommentList comments={comments} />
                 <View style={styles.inputContainer}>
                     <View style={{
@@ -155,6 +158,7 @@ export default class Comentarios extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#FFF',
     },
     inputContainer: {
         height: 50,

@@ -9,43 +9,33 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   ListView,
+  FlatList,
 } from 'react-native';
 
 import Comment from './Comment'
-
+import moment from 'moment';
+import 'moment/locale/es';
 export default class CommentList extends Component {
   constructor(props) {
     super(props);
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds
     }
   }
-  componentDidMount(){
-      this.updateDataSource(this.props.comments)
-  }
-  componentWillReceiveProps(newProps){
-      if(newProps.comments!==this.props.comments){
-          this.updateDataSource(newProps.comments)
-      }
-  }
-  updateDataSource = data =>{
-      this.setState({
-              dataSource:this.state.dataSource.cloneWithRows(data)
-          })
-  }
+  _keyExtractor = (item, index) => index;
   render() {
     
     return (
-      <ListView
-          style={{backgroundColor:"white"}}
-          enableEmptySections={true}
-          dataSource={this.state.dataSource}
-          renderRow={(comment) => {
-            return(
-                <Comment text={comment.text} user={comment.user} avatar={comment.photo_url}/>
+      <FlatList
+          data={this.props.comments}
+          
+          renderItem={({item}) => 
+            (
+                <Comment  text={item.text} user={item.user} 
+                avatar={item.photo_url} 
+                fecha={moment(new Date(item.createdAt)).fromNow()}/>
             ) 
-            }}
+            }
+            keyExtractor={this._keyExtractor}
         />
     );
   }

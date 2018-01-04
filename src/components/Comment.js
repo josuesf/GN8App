@@ -19,6 +19,7 @@ const Comment = (props) =>
         <View style={styles.comment}>
             <Text style={styles.nombre}>{props.user}</Text>
             <Text style={styles.text}>{props.text}</Text>
+            <Text style={[styles.text,{fontWeight:'bold',fontSize:10,color:'#757575'}]}>{props.fecha}</Text>
         </View>
 
     </View>

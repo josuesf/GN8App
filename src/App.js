@@ -16,6 +16,8 @@ import Splash from './screens/Splash'
 import EditarPerfil from './screens/EditarPerfil';
 import RegistroEmpresa from './screens/RegistroEmpresa';
 import Comentarios from './screens/Comentarios'
+import DieronLike from './screens/DieronLike';
+import NuevoPost from './screens/NuevoPost';
 const Main = TabNavigator({
   home: {
     screen: Home,
@@ -81,6 +83,12 @@ const App = StackNavigator(
     },
     comentarios:{
       screen:Comentarios
+    },
+    dieronLike:{
+      screen:DieronLike
+    },
+    nuevoPost:{
+      screen:NuevoPost
     }
   },
   {

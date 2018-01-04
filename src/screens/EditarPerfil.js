@@ -28,10 +28,8 @@ import { URL_WS } from '../Constantes'
 import ImagePicker from 'react-native-image-picker';
 import store from '../store'
 import RNFetchBlob from 'react-native-fetch-blob'
+import { FormLabel, FormInput,FormValidationMessage } from 'react-native-elements'
 
-import {
-    LoginManager,
-} from 'react-native-fbsdk'
 const { width, height } = Dimensions.get('window')
 export default class EditarPerfil extends Component<{}> {
     static navigationOptions = {
@@ -187,7 +185,7 @@ export default class EditarPerfil extends Component<{}> {
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         this.setState({ cargando: false })
-                        
+
                     }).catch(err => console.log('Error'));
                 } else {
                     this.setState({ cargando: false })
@@ -195,7 +193,7 @@ export default class EditarPerfil extends Component<{}> {
                 }
             })
             .catch(err => {
-                this.setState({ cargando: false,avatarSource:null })
+                this.setState({ cargando: false, avatarSource: null })
                 Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo")
             })
 
@@ -211,7 +209,7 @@ export default class EditarPerfil extends Component<{}> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id:this.state.id,
+                id: this.state.id,
                 name: this.state.nombre,
                 username: (this.state.usuario).toLocaleLowerCase().trim(),
                 email: (this.state.correo).toLocaleLowerCase().trim(),
@@ -220,11 +218,11 @@ export default class EditarPerfil extends Component<{}> {
             })
         }
         fetch(URL_WS + '/ws/updateUser', parametros)
-        .then((response) => response.json())
-        .then((responseJson) => {
-            console.log(responseJson)
-            if (responseJson.res == "ok") {
-                const user = responseJson.user
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson)
+                if (responseJson.res == "ok") {
+                    const user = responseJson.user
                     const user_data = {
                         id: user.id,
                         username: user.username,
@@ -284,19 +282,14 @@ export default class EditarPerfil extends Component<{}> {
 
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.boxInput}>
-                            <Text style={styles.labelDato}>Nombre</Text>
-                            <TextInput onChangeText={(text) => this.setState({ nombre: text })} value={this.state.nombre} placeholder="Nombre Completo" />
-                        </View>
-                        <View style={styles.boxInput}>
-                            <Text style={styles.labelDato}>Usuario</Text>
-                            <TextInput onChangeText={(text) => this.setState({ usuario: text })} value={this.state.usuario} placeholder="Usuario de Registro" editable={false} />
-                        </View>
-                        <View style={styles.boxInput}>
-                            <Text style={styles.labelDato}>Correo</Text>
-                            <TextInput onChangeText={(text) => this.setState({ correo: text })} value={this.state.correo} placeholder="Correo de registro" editable={false} />
-                        </View>
-
+                        <FormLabel>Nombre</FormLabel>
+                        <FormInput underlineColorAndroid="#eee" value={this.state.nombre} onChangeText={(text)=>this.setState({nombre:text})} />
+                        <FormLabel>Usuario</FormLabel>
+                        <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.usuario} onChangeText={(text)=>this.setState({usuario:text})} />
+                        <FormLabel>Correo</FormLabel>
+                        <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.correo} onChangeText={(text)=>this.setState({correo:text})} />
+                        
+                        
                         <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginTop: 50, marginBottom: 50 }}>
                             <TouchableOpacity onPress={this.guardarCambios}
                                 activeOpacity={0.8} style={styles.botonGuardar}>
