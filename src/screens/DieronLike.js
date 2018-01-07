@@ -16,6 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons'
 const { width, height } = Dimensions.get('window');
 import { List, ListItem, SearchBar } from "react-native-elements";
+import { URL_WS_SOCKET } from '../Constantes';
 export default class DieronLike extends Component {
     static navigationOptions = {
         title: 'Les parece genial a...',
@@ -25,28 +26,44 @@ export default class DieronLike extends Component {
         super()
 
         this.state = {
+            likes:[],
+            buscandoLikes:true,
         }
     }
     _keyExtractor = (item, index) => index;
-    renderSeparator = () => {
-        return (
-          <View
-            style={{
-              height: 1,
-              width: "86%",
-              backgroundColor: "#CED0CE",
-              marginLeft: "14%"
-            }}
-          />
-        );
-      };
+    componentWillMount(){
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({
+                id_post:this.props.navigation.state.params.id_post
+            })
+        }
+        fetch(URL_WS_SOCKET + "/ws/like_post", parametros)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.res == "ok") {
+                    this.setState({ likes: responseJson.likes, buscandoLikes: false })
+                } else {
+                    Alert.alert("Error",responseJson.detail)
+                }
+            })
+            .catch(err => {
+                this.setState({ buscandoLikes: false })
+                Alert.alert("Error",err)
+            })
+    }
     render() {
         const { navigate } = this.props.navigation;
 
         return (
             <View ref="personas" behavior="padding" style={styles.container}>
+                {this.state.buscandoLikes && <ActivityIndicator color="#831DA2" size="large" style={{ marginTop: 10 }} />}
                 <FlatList
-                    data={this.props.navigation.state.params.dieronLike}
+                    data={this.state.likes}
                     
                     renderItem={({ item }) =>
                         (

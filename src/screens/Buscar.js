@@ -57,8 +57,8 @@ export default class Buscar extends Component<{}> {
         headerTintColor: 'purple',
         header: null,
         tabBarIcon: ({ tintColor, focused }) => (
-            <IconMaterial
-                name={focused ? 'magnify' : 'magnify'}
+            <Icon
+                name={focused ? 'ios-search-outline' : 'ios-search-outline'}
                 size={25}
                 color={focused ? tintColor : '#d1c4e9'}
             />

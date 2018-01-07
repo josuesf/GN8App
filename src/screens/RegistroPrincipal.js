@@ -169,7 +169,7 @@ export default class RegistroPrincipal extends Component<{}> {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
-                <StatusBar backgroundColor="black" barStyle="light-content" />
+                <StatusBar backgroundColor="white" barStyle="dark-content" />
                 <View style={{ height: height / 3, justifyContent: 'center' }}>
                     <Text style={{
                         color: '#d1c4e9', fontWeight: 'bold',

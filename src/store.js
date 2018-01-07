@@ -40,4 +40,6 @@ export default createStore(reducer,
         usuario: null,
         password: null,
         photoUrl: null,
+        //Publicaciones guardar
+        posts:[],
     })

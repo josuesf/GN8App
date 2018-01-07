@@ -31,8 +31,8 @@ export default class Invitaciones extends Component<{}> {
         headerTintColor:'purple',
         header:null,
         tabBarIcon: ({ tintColor, focused }) => (
-            <IconMaterial
-                name={focused ? 'qrcode' : 'qrcode'}
+            <Icon
+                name={focused ? 'ios-barcode-outline' : 'ios-barcode-outline'}
                 size={25}
                 color={focused ? tintColor : '#d1c4e9'}
             />

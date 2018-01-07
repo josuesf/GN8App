@@ -33,17 +33,8 @@ import { FormLabel, FormInput,FormValidationMessage } from 'react-native-element
 const { width, height } = Dimensions.get('window')
 export default class EditarPerfil extends Component<{}> {
     static navigationOptions = {
-        title: 'Home',
+        title: 'Editar Perfil',
         headerTintColor: 'purple',
-        header: null,
-        tabBarLabel: 'Home',
-        tabBarIcon: ({ tintColor, focused }) => (
-            <IconMaterial
-                name={focused ? 'account-outline' : 'account-outline'}
-                size={25}
-                color={focused ? tintColor : '#d1c4e9'}
-            />
-        ),
     };
     constructor() {
         super()
@@ -257,13 +248,7 @@ export default class EditarPerfil extends Component<{}> {
 
         return (
             <View style={styles.container}>
-                <View style={styles.toolbar} >
-                    <TouchableOpacity onPress={() => goBack()}
-                        style={{ marginRight: 10, alignItems: 'center' }}>
-                        <IconMaterial name={'arrow-left'} size={30} color={'#616161'} />
-                    </TouchableOpacity>
-                    <Text style={{ fontWeight: '900', fontSize: 18, color: '#616161' }}>Editar Perfil</Text>
-                </View>
+                
                 <ScrollView>
                     <View style={styles.container}>
                         {this.state.cargando &&

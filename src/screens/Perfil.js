@@ -40,8 +40,8 @@ export default class Perfil extends Component<{}> {
         header: null,
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
-            <IconMaterial
-                name={focused ? 'account-outline' : 'account-outline'}
+            <Icon
+                name={focused ? 'ios-person-outline' : 'ios-person-outline'}
                 size={25}
                 color={focused ? tintColor : '#d1c4e9'}
             />

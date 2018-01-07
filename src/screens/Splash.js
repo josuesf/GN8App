@@ -9,6 +9,7 @@ import {
     StyleSheet,
     View,
     AsyncStorage,
+    StatusBar,
 } from 'react-native';
 import { AccessToken } from 'react-native-fbsdk';
 import { NavigationActions } from 'react-navigation'
@@ -35,13 +36,13 @@ export default class Splash extends Component<{}> {
                 NavigationActions.navigate({ routeName: 'registroMain' })
             ]
         })
-        AsyncStorage.getItem("USER_DATA",(err,res)=>{
-            if(err){
+        AsyncStorage.getItem("USER_DATA", (err, res) => {
+            if (err) {
                 this.props.navigation.dispatch(registerMain)
-            }else{
-                if(res!=null){
+            } else {
+                if (res != null) {
                     this.props.navigation.dispatch(main)
-                }else{
+                } else {
                     this.props.navigation.dispatch(registerMain)
                 }
             }
@@ -62,6 +63,10 @@ export default class Splash extends Component<{}> {
         const { navigate } = this.props.navigation;
         return (
             <View style={styles.container}>
+                <StatusBar
+                    backgroundColor="white"
+                    barStyle="dark-content"
+                />
             </View>
         );
     }

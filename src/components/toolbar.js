@@ -7,15 +7,15 @@ import {
     Text,
     StyleSheet,
     Dimensions,
+    Image,
 } from 'react-native';
 import { SafeAreaView, TabNavigator } from 'react-navigation';
 const {width}=Dimensions.get('window')
 
 const toolbar = ({ navigation, banner }) => (
     <View style={[styles.container]} >
-        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:20,color:'#831DA2'}}>G</Text>}
-        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:20,color:'#831DA2'}}>N</Text>}
-        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:20,color:'#831DA2'}}>8</Text>}
+        {banner=="GN8" && <Image style={{height:38,width:38}} resizeMode='stretch' source={require('../assets/img/logo.png')}/>}
+        
         {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#757575'}}>{banner}</Text>}
     </View>
 );
