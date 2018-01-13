@@ -25,6 +25,12 @@ const reducer = (state, action) => {
             photoUrl: action.photoUrl
         }
     }
+    if (action.type === "ACTUALIZAR_INVITACIONES") {
+        return {
+            ...state,
+            nueva_invitacion: action.nueva_invitacion,
+        }
+    }
 
     return state
 }
@@ -42,4 +48,5 @@ export default createStore(reducer,
         photoUrl: null,
         //Publicaciones guardar
         posts:[],
+        nueva_invitacion:false,
     })

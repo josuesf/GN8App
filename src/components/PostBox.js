@@ -90,7 +90,7 @@ export default class PostBox extends Component {
             esGenial: leGusta,
             fecha_publicada: moment(new Date(this.props.post.createdAt)).fromNow()
         })
-        this.getHeight(this.props.post.photo_post)
+        this.getHeight(URL_WS_SOCKET+this.props.post.photo_post)
     }
     darGenial = (id_post) => {
         var { personasGenial, esGenial } = this.state
@@ -112,13 +112,20 @@ export default class PostBox extends Component {
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
-                    <Image source={{ uri: this.props.post.photo_url }}
-                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, }} />
+                    <View style={{flex:1,alignItems:'center',flexDirection:'row'}}>
+                        <Image source={{ uri: URL_WS_SOCKET+this.props.post.photo_url,}}
+                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,borderRadius:12 }} />
                     <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>{this.props.post.nombre_usuario}</Text>
+                    </View>
+                    <TouchableOpacity style={{marginRight:10}} onPress={() => console.log('oye')}>
+                        <Icon name={"ios-bookmark-outline"} size={30} color={"#831DA2"} />
+                    </TouchableOpacity>
                 </View>
                 <View style={{ alignItems: 'center', borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#e0e0e0' }}>
-                    <Image source={{ uri: this.props.post.photo_post }}
-                        style={{ height: this.state.heightImg, width: width }} resizeMode='contain' />
+                    <Image source={{ uri: URL_WS_SOCKET+this.props.post.photo_post,cache: 'only-if-cached', }}
+                        style={{ height: this.state.heightImg, width: width }}
+                        resizeMode='contain'
+                        defaultSource={require('../assets/img/imgloader.gif')} />
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.darGenial(this.props.post._id)}>
@@ -129,10 +136,11 @@ export default class PostBox extends Component {
                     </TouchableOpacity>
 
                     {/*<IconMaterial name="beer" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />*/}
-                    {this.props.post.codigoqr && 
-                    <TouchableOpacity onPress={this.props.ObtenerCodigoQR}>
-                        <Icon name="ios-barcode-outline" size={30} color="#831DA2" style={{ marginRight: 15 }} />
-                    </TouchableOpacity>}
+                    {this.props.post.codigoqr &&
+                        <TouchableOpacity onPress={this.props.ObtenerCodigoQR}>
+                            <Icon name="ios-barcode-outline" size={30} color="#831DA2" style={{ marginRight: 15 }} />
+                        </TouchableOpacity>}
+                    
                 </View>
                 <View style={{ flexDirection: 'column', marginBottom: 10, padding: 5, marginLeft: 10 }}>
                     <Text style={{ fontSize: 13, marginVertical: 3, fontWeight: 'bold', color: '#757575' }}>{this.props.post.nombre_post}</Text>

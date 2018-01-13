@@ -24,7 +24,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toolbar from '../components/toolbar'
 import { NavigationActions } from 'react-navigation'
-import { URL_WS } from '../Constantes'
+import { URL_WS, URL_WS_SOCKET } from '../Constantes'
 import ImagePicker from 'react-native-image-picker';
 import store from '../store'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -43,7 +43,7 @@ export default class EditarPerfil extends Component<{}> {
             correo: '',
             nombre: '',
             usuario: '',
-            photoUrl: '',
+            photoUrl: store.getState().photoUrl,
             password: '',
             cargando: false,
             avatarSource: null,
@@ -69,6 +69,8 @@ export default class EditarPerfil extends Component<{}> {
     cerrarSesion = () => {
         AsyncStorage.removeItem("USER_DATA", err => {
             if (!err) {
+                AsyncStorage.removeItem("POSTS")
+                AsyncStorage.removeItem("EMPRESAS")
                 const registerMain = NavigationActions.reset({
                     index: 0,
                     actions: [
@@ -88,8 +90,8 @@ export default class EditarPerfil extends Component<{}> {
             takePhotoButtonTitle: 'Toma una foto',
             chooseFromLibraryButtonTitle: 'Escoge una de tu galeria',
             quality: 1.0,
-            maxWidth: 500,
-            maxHeight: 500,
+            maxWidth: 200,
+            maxHeight: 200,
             storageOptions: {
                 skipBackup: true
             }
@@ -154,9 +156,9 @@ export default class EditarPerfil extends Component<{}> {
         this.setState({ cargando: true })
         const data = [
             { name: 'id', data: this.state.id },
-            { name: 'picture', filename: 'avatar.png', data: this.state.dataImg }
+            { name: 'picture', filename: this.state.id+Date.now()+'.png', data: this.state.dataImg }
         ]
-        RNFetchBlob.fetch('POST', URL_WS + "/ws/upload_photo_user", {
+        RNFetchBlob.fetch('POST', URL_WS_SOCKET + "/ws/upload_photo_user", {
             Authorization: "Bearer access-token",
             otherHeader: "foo",
             'Content-Type': 'multipart/form-data',
@@ -165,9 +167,9 @@ export default class EditarPerfil extends Component<{}> {
                 resultado = JSON.parse(res.data)
                 console.log(resultado)
                 if (resultado.res == "ok") {
-                    const user = resultado.user[0]
+                    const user = resultado.user
                     const user_data = {
-                        id: user.id,
+                        id: user._id,
                         username: user.username,
                         name: user.name,
                         email: user.email,
@@ -184,6 +186,7 @@ export default class EditarPerfil extends Component<{}> {
                 }
             })
             .catch(err => {
+                console.log(err)
                 this.setState({ cargando: false, avatarSource: null })
                 Alert.alert("Error", "No se pudo subir su imagen vuelva a intentarlo")
             })
@@ -243,7 +246,7 @@ export default class EditarPerfil extends Component<{}> {
     render() {
         const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
+            <Image source={{ uri: URL_WS_SOCKET+this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (

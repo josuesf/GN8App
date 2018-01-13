@@ -11,9 +11,10 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-const {width,height} = Dimensions.get('window')
+import { URL_WS_SOCKET } from '../Constantes';
+const { width, height } = Dimensions.get('window')
 const DEFAULT_AVATAR = './imgs/fg-avatar.png'
-const AVATAR_SIZE = width/2-10
+const AVATAR_SIZE = width / 2 - 10
 export default class EmpresaBox extends Component {
     state = {
     }
@@ -21,19 +22,20 @@ export default class EmpresaBox extends Component {
 
         return (
             <View ref="root" style={styles.container}>
-                <View style={{flexDirection:'row',alignItems:'center',marginBottom:10,marginTop:5,padding:5}}>
-                    <Image source={{ uri: this.props.empresa.photo_url }}
-                        style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
-                    
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
+                    <Image source={{ uri: URL_WS_SOCKET+this.props.empresa.photo_url }}
+                        style={{ width: AVATAR_SIZE - 10, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
+
                 </View>
-                <Text style={{marginLeft:5,color:'#424242',fontWeight:'bold'}}>{this.props.empresa.name}</Text>
-                <View style={{flexDirection:'row',width:width/3+10,alignItems:'center',padding:10}}>
-                    <IconMaterial name="emoticon-cool" size={30} color="#ab47bc" style={{marginRight:5}}/>
-                    <Text style={{fontSize:10,fontWeight:'bold',color:'#9e9e9e'}}>{"A 10 personas les parece genial"}</Text>
-                    
+                <Text style={{ alignSelf:'center', color: '#424242', fontWeight: 'bold' }}>{this.props.empresa.name}</Text>
+                <View style={{ flexDirection: 'row', alignSelf: 'center',alignItems:'center', padding: 10 }}>
+                    <Icon name={"ios-star"}
+                        size={30} color={"#FFC300"} style={{ marginRight: 15 }} />
+                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9e9e9e' }}>{this.props.empresa.likes}</Text>
+
                 </View>
-                <View style={{flexDirection:'column',marginBottom:10,padding:5}}>
-                    
+                <View style={{ flexDirection: 'column', marginBottom: 10, padding: 5 }}>
+
                 </View>
             </View>
         );
@@ -46,9 +48,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         shadowColor: 'black',
         shadowOpacity: .2,
-        elevation:2,
+        elevation: 2,
         margin: 3,
-        width: width/2-6
+        width: width / 2 - 6,
+        borderRadius: 10,
     },
     image: {
         width: 50,

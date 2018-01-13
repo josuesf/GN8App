@@ -26,8 +26,8 @@ export default class NuevoPost extends Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
-            title: 'Nueva Publicacion',
-            headerTintColor: 'purple',
+            title: '',
+            headerTintColor: 'black',
             headerRight: (
                 <TouchableOpacity
                     onPress={params.handleSave ? params.handleSave : () => null}
@@ -107,30 +107,24 @@ export default class NuevoPost extends Component {
                 this.refs.nombreInput.shake()
                 return false
             } else {
-                if (this.state.descripcion == "") {
-                    this.setState({ error_descripcion: true })
-                    this.refs.descripcionInput.focus()
-                    this.refs.descripcionInput.shake()
-                    return false
-                } else {
-                    if (this.state.codigoqr) {
-                        if (this.state.codigoqr_des == "") {
-                            this.setState({ error_codigoqr_des: true })
-                            this.refs.qrdesInput.focus()
-                            this.refs.qrdesInput.shake()
-                            return false
-                        } else return true
-                    } else
-                        return true;
-                }
+                if (this.state.codigoqr) {
+                    if (this.state.codigoqr_des == "") {
+                        this.setState({ error_codigoqr_des: true })
+                        this.refs.qrdesInput.focus()
+                        this.refs.qrdesInput.shake()
+                        return false
+                    } else return true
+                } else
+                    return true;
             }
+
         }
 
     }
     storePicture = () => {
         if (this.validarCampos()) {
 
-            this.setState({ publicando: true,ErrorPublicacion:false })
+            this.setState({ publicando: true, ErrorPublicacion: false })
             const data = [
                 { name: 'nombre_post', data: this.state.nombre_post },
                 { name: 'descripcion', data: this.state.descripcion },
@@ -149,9 +143,9 @@ export default class NuevoPost extends Component {
                 .then(res => {
                     if (res.respInfo.status == 200)
                         this.props.navigation.goBack()
-                    else{
-                        this.setState({ publicando: false,ErrorPublicacion:true })
-                        
+                    else {
+                        this.setState({ publicando: false, ErrorPublicacion: true })
+
                     }
                 })
                 .catch(err => {
@@ -173,36 +167,27 @@ export default class NuevoPost extends Component {
 
     render() {
         const { navigate, goBack } = this.props.navigation;
-        const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
-            : <Icon name="ios-images-outline" size={100} color="#9e9e9e" style={{ alignSelf: 'center' }} />
 
         return (
             <View ref="new_post" style={styles.container}>
                 <ScrollView>
-                    {this.state.ErrorPublicacion && <Text style={{alignSelf:'center',marginVertical:10,color:'red'}}
+                    {this.state.ErrorPublicacion && <Text style={{ alignSelf: 'center', marginVertical: 10, color: 'red' }}
                     >No se puedo subir su publicacion,intentelo luego</Text>}
                     <ProgressDialog
                         visible={this.state.publicando}
                         title="Publicando"
                         message="Por favor, espere..."
                     />
-                    <FormLabel labelStyle={{ color: '#333', fontSize: 15 }}>Sube una imagen para tu publicacion</FormLabel>
-                    <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginBottom: 0 }}>
+                    <TouchableOpacity onPress={this.selectPhotoTapped.bind(this)}
+                        style={{ flexDirection: 'column', width, justifyContent: 'center', marginBottom: 0 }}>
 
-                        <TouchableOpacity activeOpacity={0.8}
-                            style={{
-                                padding: 0, marginTop: 10,
+                        {this.state.avatarSource ?
+                            <Image style={{ width, height: this.state.heightImg }} source={this.state.avatarSource} />
+                            : <Icon name="ios-images-outline" size={200} color="#9e9e9e" style={{ alignSelf: 'center' }} />}
 
-                            }}
-                            onPress={this.selectPhotoTapped.bind(this)}>
-                            {this.state.avatarSource &&
-                                <Image style={{ width, height: this.state.heightImg }} source={this.state.avatarSource} />}
-                            {!this.state.avatarSource && photo}
-
-                        </TouchableOpacity>
-                    </View>
-                    <FormLabel labelStyle={{ color: '#333', fontSize: 15 }}>Nombre de tu publicacion</FormLabel>
+                        <Text style={{ color: "#3498db", marginVertical: 10, alignSelf: 'center' }}>Selecciona una imagen para publicar</Text>
+                    </TouchableOpacity>
+                    <FormLabel labelStyle={{ color: '#7f8c8d', fontSize: 15 }}>• Nombre de tu publicacion</FormLabel>
                     <FormInput ref='nombreInput'
                         returnKeyType={"next"}
                         onSubmitEditing={(event) => {
@@ -213,14 +198,14 @@ export default class NuevoPost extends Component {
                         onChangeText={(text) => this.setState({ nombre_post: text, error_nombre: false })} />
                     {this.state.error_nombre && <FormValidationMessage>Este campo es obligatorio</FormValidationMessage>}
 
-                    <FormLabel labelStyle={{ color: '#333', fontSize: 15 }}>Describa brevemente su evento</FormLabel>
+                    <FormLabel labelStyle={{ color: '#7f8c8d', fontSize: 15 }}>• Describa brevemente su evento</FormLabel>
                     <FormInput ref='descripcionInput' underlineColorAndroid="#eee"
                         onChangeText={(text) => this.setState({ descripcion: text, error_descripcion: false })} />
                     {this.state.error_descripcion && <FormValidationMessage>Este campo es obligatorio</FormValidationMessage>}
                     <CheckBox
                         containerStyle={{ marginTop: 10, backgroundColor: '#FFF', borderWidth: 0 }}
-                        textStyle={{ color: '#333', fontSize: 15 }}
-                        title='Codigo de canje(recomendado)'
+                        textStyle={{ color: '#7f8c8d', fontSize: 15 }}
+                        title='Ofrecer Codigo'
                         checked={this.state.codigoqr}
                         iconType='material'
                         checkedIcon='check-box'
@@ -228,14 +213,19 @@ export default class NuevoPost extends Component {
                         checkedColor='purple'
                         onPress={() => this.setState({ codigoqr: !this.state.codigoqr })}
                     />
+                     <Text style={{color:'#7f8c8d',marginLeft:20,marginVertical:10}}>
+                                Con este codigo puedes ofrecer invitaciones,ofertas, pases libres y todo lo que tu quieras. 
+                            </Text>
                     {this.state.codigoqr &&
                         <View>
+                            <FormLabel labelStyle={{ color: '#7f8c8d', fontSize: 15 }}>• Que ofrecera tu codigo?</FormLabel>
                             <FormInput ref="qrdesInput"
-                                placeholder={"Que se puede canjear con el codigo?"}
+                                placeholder={"Ejm: Pase libre, 10% de descuento ..."}
                                 underlineColorAndroid="#eee"
                                 onChangeText={(text) => this.setState({ codigoqr_des: text, error_codigoqr_des: false })} />
                             {this.state.error_codigoqr_des && <FormValidationMessage>Este campo es obligatorio</FormValidationMessage>}
                             <IconMaterial name="qrcode" size={100} color="purple" style={{ alignSelf: 'center', marginTop: 10 }} />
+                           
                         </View>
                     }
 

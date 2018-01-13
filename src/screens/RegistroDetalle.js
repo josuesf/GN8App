@@ -21,7 +21,7 @@ import {
     Alert,
 } from 'react-native';
 const { width, height } = Dimensions.get('window')
-import { URL_WS } from '../Constantes'
+import { URL_WS, URL_WS_SOCKET } from '../Constantes'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationActions } from 'react-navigation'
 import ImagePicker from 'react-native-image-picker';
@@ -135,10 +135,10 @@ export default class RegistroDetalle extends Component<{}> {
             { name: 'telefono', data: this.state.telefono },
             { name: 'direccion', data: this.state.direccion },
             { name: 'es_empresa', data: "SI" },
-            { name: 'photo_url', filename: 'avatar.png', data: this.state.dataImg }
+            { name: 'picture', filename: Date.now().toString()+'.png', data: this.state.dataImg }
         ]
-        console.log(data)
-        RNFetchBlob.fetch('POST', URL_WS + "/ws/signupEmpresa", {
+        
+        RNFetchBlob.fetch('POST', URL_WS_SOCKET + "/ws/signupEmpresa", {
             Authorization: "Bearer access-token",
             otherHeader: "foo",
             'Content-Type': 'multipart/form-data',
@@ -149,7 +149,7 @@ export default class RegistroDetalle extends Component<{}> {
                 if (responseJson.res == "ok") {
                     const user = responseJson.user
                     const user_data = {
-                        id: user.id,
+                        id: user._id,
                         username: user.username,
                         name: user.name,
                         email: user.email,
@@ -180,6 +180,7 @@ export default class RegistroDetalle extends Component<{}> {
 
             })
             .catch((error) => {
+                console.log(error)
                 this.setState({ cargando: false })
                 Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
             });

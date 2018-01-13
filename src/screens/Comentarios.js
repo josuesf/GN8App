@@ -146,8 +146,9 @@ export default class Comentarios extends Component {
 
                     renderItem={({ item }) =>
                         (
-                            <Comment text={item.text} user={item.user}
-                                avatar={item.photo_url}
+                            <Comment text={item.text} 
+                                user={item.user}
+                                avatar={URL_WS_SOCKET+item.photo_url}
                                 fecha={moment(new Date(item.createdAt)).fromNow()} />
                         )
                     }

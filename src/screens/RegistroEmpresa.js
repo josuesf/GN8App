@@ -51,6 +51,7 @@ export default class RegistroEmpresa extends Component<{}> {
         fetch(URL_WS + '/ws/isuser', parametros)
             .then((response) => response.json())
             .then((responseJson) => {
+            
                 if (responseJson.res != "ok") {
                     Keyboard.dismiss();
                     const main = NavigationActions.reset({
@@ -79,6 +80,7 @@ export default class RegistroEmpresa extends Component<{}> {
             })
             .catch((error) => {
                 this.setState({ cargando: false })
+                console.log(error)
                 Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
 
             });
@@ -90,8 +92,8 @@ export default class RegistroEmpresa extends Component<{}> {
             takePhotoButtonTitle: 'Toma una foto',
             chooseFromLibraryButtonTitle: 'Escoge una de tu galeria',
             quality: 1.0,
-            maxWidth: 500,
-            maxHeight: 500,
+            maxWidth: 200,
+            maxHeight: 200,
             storageOptions: {
                 skipBackup: true
             }

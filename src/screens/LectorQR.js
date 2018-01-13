@@ -17,16 +17,8 @@ import {
     Vibration,
     Button,
 } from 'react-native';
-import QRCode from 'react-native-qrcode';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-const instructions = Platform.select({
-    ios: 'Press Cmd+R to reload,\n' +
-        'Cmd+D or shake for dev menu',
-    android: 'Double tap R on your keyboard to reload,\n' +
-        'Shake or press menu button for dev menu',
-});
-//import QRCodeScanner from 'react-native-qrcode-scanner';
 import Camera from 'react-native-camera';
 import Toolbar from '../components/toolbar'
 export default class LectorQR extends Component<{}> {
@@ -47,7 +39,6 @@ export default class LectorQR extends Component<{}> {
         Vibration.vibrate();
         this.setState({ scanning: false, resultado: e.data });
         //Linking.openURL(e.data).catch(err => console.error('An error occured', err));
-
         return;
     }
     state = {
@@ -67,7 +58,9 @@ export default class LectorQR extends Component<{}> {
                 <View style={styles.container}>
                     <Toolbar navigation={navigate} banner={"Scanner Code"} />
                     <View style={styles.rectangleContainer}>
-                        <Camera style={styles.camera} type={this.state.cameraType} onBarCodeRead={this._handleBarCodeRead.bind(this)}>
+                        <Camera style={styles.camera} 
+                            type={this.state.cameraType} 
+                            onBarCodeRead={this._handleBarCodeRead.bind(this)}>
                             <View style={styles.rectangleContainer}>
                                 <View style={styles.rectangle} />
                             </View>

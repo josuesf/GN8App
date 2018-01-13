@@ -184,6 +184,7 @@ export default class Login extends Component<{}> {
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
+                        es_empresa:user.es_empresa,
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         const main = NavigationActions.reset({

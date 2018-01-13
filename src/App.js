@@ -21,7 +21,7 @@ import NuevoPost from './screens/NuevoPost';
 const Main = TabNavigator({
   home: {
     screen: Home,
-    path: '',
+    path: 'homeTab',
   },
   buscador: {
     screen: Buscar,
@@ -37,7 +37,7 @@ const Main = TabNavigator({
   }
 }, {
     tabBarPosition: 'bottom',
-    animationEnabled: true,
+    animationEnabled: false,
     swipeEnabled:false,
     tabBarOptions: {
       activeTintColor: '#831DA2',
@@ -89,6 +89,9 @@ const App = StackNavigator(
     },
     nuevoPost:{
       screen:NuevoPost
+    },
+    lectorQR:{
+      screen:LectorQR
     }
   },
   {

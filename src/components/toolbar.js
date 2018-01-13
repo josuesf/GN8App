@@ -14,9 +14,9 @@ const {width}=Dimensions.get('window')
 
 const toolbar = ({ navigation, banner }) => (
     <View style={[styles.container]} >
-        {banner=="GN8" && <Image style={{height:38,width:38}} resizeMode='stretch' source={require('../assets/img/logo.png')}/>}
+        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#831da2'}}>G N 8</Text>}
         
-        {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#757575'}}>{banner}</Text>}
+        {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#333'}}>{banner}</Text>}
     </View>
 );
 const styles = StyleSheet.create({
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         height:50,alignItems:'center',justifyContent:'center',
         ...Platform.select({
             ios: {
-                borderBottomWidth:0.5,marginTop:10,borderColor:'#bdc3c7',
+                borderBottomWidth:0.5,marginTop:20,borderColor:'#bdc3c7',
             },
           }),
     },

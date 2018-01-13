@@ -48,14 +48,17 @@ export default class Home extends Component<{}> {
         ),
     };
     constructor() {
+        console.ignoredYellowBox = [
+            'Setting a timer'
+        ];
         super()
         this.state = {
             posts: store.getState().posts,
-            buscandoPosts: true,
+            //buscandoPosts: true,
             refreshing: false,
-            page: 0,
+            page: 1,
             loading: false,
-            SeguirCargando: true,
+            SeguirCargando: false,
             modalCodigoQR: false,
         }
 
@@ -78,10 +81,12 @@ export default class Home extends Component<{}> {
     }
     componentDidMount() {
         store.getState().socket.on('posts', (data, cb) => {
-            this.setState({ posts: [data, ...this.state.posts] })
+            const currentPosts = this.state.posts
+            this.setState({ posts: [] }, () => this.setState({ posts: [data, ...currentPosts] }))
         });
     }
     CargarPosts = () => {
+        this.setState({ loadingMore: true })
         const parametros = {
             method: 'POST',
             headers: {
@@ -96,22 +101,36 @@ export default class Home extends Component<{}> {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson.res == "ok") {
-                    this.setState({
-                        posts: this.state.page == 1 ?
-                            responseJson.posts
-                            : [...this.state.posts, ...responseJson.posts],
-                        buscandoPosts: false,
-                        loadingMore: false,
-                        SeguirCargando: responseJson.posts.length != 0 ? true : false
-                    })
+                    console.log(this.state.page)
+                    if (this.state.page == 1) {
+                        AsyncStorage.setItem('POSTS', JSON.stringify(responseJson.posts), () => {
+                            console.log('Se guardaron las publicaciones')
+                        }).catch(err => console.log(err));
+                        this.setState({
+                            posts: [],
+                        },()=>this.setState({
+                            posts: [...responseJson.posts],
+                            buscandoPosts: false,
+                            loadingMore: false,
+                            SeguirCargando: responseJson.posts.length != 0 ? true : false
+                        }))
+                    } else {
+                        this.setState({
+                            posts: [...this.state.posts, ...responseJson.posts],
+                            buscandoPosts: false,
+                            loadingMore: false,
+                            SeguirCargando: responseJson.posts.length != 0 ? true : false
+                        })
+                    }
+
                 } else {
                     this.setState({ buscandoPosts: false, loadingMore: false })
-                    Alert.alert("Error", responseJson.detail)
+
                 }
             })
             .catch(err => {
-                this.setState({ buscandoPosts: false, loadingMore: false })
-                Alert.alert("Error", err)
+                console.log(err)
+                this.setState({ buscandoPosts: false, loadingMore: false, SeguirCargando: false })
             })
     }
     handleLoadMore = () => {
@@ -119,6 +138,7 @@ export default class Home extends Component<{}> {
             this.setState(
                 {
                     page: this.state.page + 1,
+                    SeguirCargando:false,
                 },
                 () => {
                     this.CargarPosts();
@@ -127,11 +147,17 @@ export default class Home extends Component<{}> {
 
     };
     _onRefresh = () => {
-        this.setState({ page: 1 }, () => { this.CargarPosts() })
+        this.setState({ page: 1 }, () => this.CargarPosts())
     }
     componentWillMount() {
         this.cargarDatosUsuarioStore()
-
+        AsyncStorage.getItem("POSTS", (err, res) => {
+            if (res != null) {
+                res = JSON.parse(res)
+                this.setState({ posts: res })
+            }
+        })
+        this.CargarPosts()
     }
     AbrirNuevoPost = () => {
         this.props.navigation.navigate('nuevoPost')
@@ -159,24 +185,21 @@ export default class Home extends Component<{}> {
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson.res == "ok") {
-                    console.log(responseJson)
-                    if (responseJson.invitacion.length > 0)
+                    if (responseJson.invitacion.length > 0) {
                         this.setState({
                             recuperandoCodigo: false,
                             codigoRecuperado: responseJson.invitacion[0]._id
                         })
-                    else
+                    } else
                         this.setState({
                             recuperandoCodigo: false,
                         })
                 } else {
                     this.setState({ recuperandoCodigo: false })
-                    Alert.alert("Error", responseJson.detail)
                 }
             })
             .catch(err => {
                 this.setState({ recuperandoCodigo: false })
-                Alert.alert("Error", err)
             })
     }
     GenerarCodigoQR = () => {
@@ -208,13 +231,18 @@ export default class Home extends Component<{}> {
                     this.setState({ recuperandoCodigo: false, codigoRecuperado: responseJson.invitacion._id })
                 } else {
                     this.setState({ recuperandoCodigo: false })
-                    Alert.alert("Error", responseJson.detail)
                 }
             })
             .catch(err => {
                 this.setState({ recuperandoCodigo: false })
-                Alert.alert("Error", err)
             })
+    }
+    VerInvitacion = () => {
+        store.dispatch({
+            type: 'ACTUALIZAR_INVITACIONES',
+            nueva_invitacion: true,
+        })
+        this.props.navigation.navigate('invitaciones')
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -225,11 +253,15 @@ export default class Home extends Component<{}> {
                     barStyle="dark-content"
                 />
                 <Toolbar navigation={navigate} banner={"GN8"} />
+
                 <TouchableOpacity onPress={this.AbrirNuevoPost}
                     activeOpacity={0.7} style={{ backgroundColor: '#FFF', height: 50, paddingRight: 5 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
-                        <Image source={{ uri: store.getState().photoUrl }}
-                            style={{ width: 28, height: 28, }} />
+                        {/*<Image source={{ uri: store.getState().photoUrl }}
+                            style={{ width: 28, height: 28, }} />*/}
+                        <Image source={require('../assets/img/imgloader.gif')}
+                            style={{ height: 35, width: 35 }}
+                            resizeMode='contain' />
                         <View style={{
                             borderWidth: 1, borderColor: '#831DA2',
                             backgroundColor: '#FFF',
@@ -240,7 +272,9 @@ export default class Home extends Component<{}> {
                                 Quieres publicar tu evento?
                             </Text>
                         </View>
-                        <Icon name="ios-images-outline" size={30} color="#831DA2" />
+                        <Image source={require('../assets/img/imgloader.gif')}
+                            style={{ height: 35, width: 35 }}
+                            resizeMode='contain' />
 
                     </View>
                 </TouchableOpacity>
@@ -259,33 +293,31 @@ export default class Home extends Component<{}> {
                         !this.state.loadingMore ?
                             (this.state.SeguirCargando ? null :
                                 null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                            : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
+                            : <Image source={require('../assets/img/loading.gif')} style={{ marginVertical: 10, height: 50, width: 50, alignSelf: 'center' }} />
                     }
                     onEndReached={this.handleLoadMore}
-                    onEndReachedThreshold={0.1}
+                    onEndReachedThreshold={10}
                     initialNumToRender={10}
                 />
                 <Dialog
                     visible={this.state.modalCodigoQR}
-                    title="Codigo QR"
-                //onTouchOutside={() => this.setState({ modalCodigoQR: false })} 
+                    title={this.state.modalCodQRdes}
+                    onTouchOutside={() => this.setState({ modalCodigoQR: false })}
+                    onRequestClose={() => this.setState({ modalCodigoQR: false })}
                 >
                     <View>
-                        <View>
-                            <Text>{this.state.modalCodQRdes}</Text>
-                        </View>
                         <View style={{ alignItems: 'center', marginVertical: 10 }}>
 
                             {this.state.recuperandoCodigo &&
                                 <ActivityIndicator size="large" color="#d1c4e9" />}
                             {this.state.codigoRecuperado &&
                                 <View style={{ alignItems: 'center' }}><QRCode
-                                    value={"47343734834843"}
+                                    value={this.state.codigoRecuperado}
                                     size={200}
-                                    bgColor='#d1c4e9'
+                                    bgColor='#333'
                                     fgColor='white' />
                                     <Text style={{ color: '#757575', marginVertical: 10 }}>Muestra por favor este codigo para canjearlo</Text>
-                                    <TouchableOpacity onPress={() => this.setState({ modalCodigoQR: false })}
+                                    <TouchableOpacity onPress={() => this.setState({ modalCodigoQR: false }, () => this.VerInvitacion())}
                                         activeOpacity={0.7}
                                         style={{ backgroundColor: "#831da2", borderRadius: 10, padding: 10, marginTop: 10, }}>
                                         <Text style={{ color: '#FFF' }}>Listo</Text>
@@ -293,16 +325,14 @@ export default class Home extends Component<{}> {
                                 </View>}
                         </View>
                         {!this.state.codigoRecuperado && !this.state.recuperandoCodigo &&
-                            < View >
+                            < View style={{alignItems:'center'}}>
                                 <TouchableOpacity onPress={this.GenerarCodigoQR}
                                     activeOpacity={0.7}
-                                    style={{ backgroundColor: "#831da2", borderRadius: 10, padding: 10, marginTop: 10, }}>
-                                    <Text style={{ color: '#FFF' }}>Aceptar invitacion</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity activeOpacity={0.7}
-                                    onPress={() => this.setState({ modalCodigoQR: false })}
-                                    style={{ backgroundColor: "#757575", borderRadius: 10, padding: 10, marginVertical: 5, }}>
-                                    <Text style={{ color: '#FFF' }}>No,Gracias</Text>
+                                    style={{ backgroundColor: "#831da2", flexDirection:'row',
+                                    alignItems:'center',
+                                    borderRadius: 10, padding: 10, marginTop: 10, }}>
+                                    <Icon name='ios-barcode-outline' size={25} color="white"/>
+                                    <Text style={{ color: '#FFF',marginHorizontal:10 }}>OBTENER CODIGO</Text>
                                 </TouchableOpacity>
                             </View>}
                     </View>
@@ -311,30 +341,7 @@ export default class Home extends Component<{}> {
             </View>
         );
     }
-    _onRefresh = () => {
-        this.setState({ refreshing: true });
-        const parametros = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }
-        fetch(URL_WS_SOCKET + "/ws/posts", parametros)
-            .then(response => response.json())
-            .then(responseJson => {
-                this.setState({ refreshing: false, posts: [] })
-                if (responseJson.res == "ok") {
-                    this.setState({ refreshing: false, posts: responseJson.posts })
-                } else {
-                    this.setState({ refreshing: false, posts: responseJson.posts })
-                }
-            })
-            .catch(err => {
-                this.setState({ refreshing: false })
-                Alert.alert("Error", "Ocurrio un error al recuperar los posts")
-            })
-    }
+
 }
 
 const styles = StyleSheet.create({

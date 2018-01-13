@@ -17,40 +17,37 @@ import {
     Vibration,
     Button,
     Alert,
+    FlatList,
+    ActivityIndicator,
+    AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import ListaEmpresas from '../components/ListaEmpresas'
-import {SearchBar } from "react-native-elements";
-import {URL_WS} from '../Constantes'
+import Toolbar from '../components/toolbar'
+import { SearchBar } from "react-native-elements";
+import EmpresaBox from '../components/EmpresaBox'
+import { URL_WS, URL_WS_SOCKET } from '../Constantes'
 const { width, height } = Dimensions.get('window')
 export default class Buscar extends Component<{}> {
     constructor() {
         super()
         this.state = {
-            buscarBox: false,
             textBusqueda: '',
             empresas: [],
+            page: 1,
+            refreshing:false,
+            SeguirCargando:false
         }
     }
-    componentWillMount(){
-        const parametros = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        }
-        fetch(URL_WS+"/ws/listaEmpresas",parametros)
-        .then(response=>response.json())
-        .then(responseJson=>{
-            if(responseJson.res=="ok"){
-                this.setState({empresas:responseJson.empresas})
+    componentWillMount() {
+        AsyncStorage.getItem("EMPRESAS", (err, res) => {
+            if (res != null) {
+                res = JSON.parse(res)
+                this.setState({ empresas: res })
             }
         })
-        .catch(err=>{
-            Alert.alert("Error","Ocurrio un error al recuperar empresas")
-        })
+        this.CargarEmpresas()
     }
     static navigationOptions = {
         title: 'Buscar',
@@ -65,61 +62,135 @@ export default class Buscar extends Component<{}> {
         ),
 
     };
+    CargarEmpresas = () => {
+        this.setState({ loadingMore: true })
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                page: this.state.page,
+                es_empresa: 'SI'
+            })
+        }
+        fetch(URL_WS_SOCKET + "/ws/listaEmpresas", parametros)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.res == "ok") {
+                    if (this.state.page == 1) {
+                        console.log("Empresas",this.state.page)
+                        AsyncStorage.setItem('EMPRESAS', JSON.stringify(responseJson.empresas), () => {
+                            console.log('Se guardaron las publicaciones')
+                        }).catch(err => console.log(err));
+                        this.setState({
+                            empresas: [],
+                        },()=>this.setState({
+                            empresas: [...responseJson.empresas],
+                            loadingMore: false,
+                            SeguirCargando: responseJson.empresas.length != 0 ? true : false
+                        }))
+                    } else {
+                        this.setState({
+                            empresas: [...this.state.empresas, ...responseJson.empresas],
+                            loadingMore: false,
+                            SeguirCargando: responseJson.empresas.length != 0 ? true : false
+                        })
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+    BuscarUsuarios = (text) => {
+        this.setState({ loadingMore: true,textBusqueda:text })
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name:text
+            })
+        }
+        fetch(URL_WS_SOCKET + "/ws/buscarUsuarios", parametros)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.res == "ok") {
+                    this.setState({
+                        empresas: [],
+                    },()=>this.setState({
+                        empresas: [...responseJson.empresas],
+                        loadingMore: false,
+                    }))
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+    handleLoadMore = () => {
+        if (this.state.SeguirCargando)
+            this.setState(
+                {
+                    page: this.state.page + 1,
+                    SeguirCargando: false
+                },
+                () => {
+                    this.CargarEmpresas();
+                }
+            );
+
+    };
+    _onRefresh = () => {
+        this.setState({ page: 1, }, () => { this.CargarEmpresas() })
+    }
     onBusqueda = (text) => {
         this.setState({ textBusqueda: text })
     }
     render() {
         const { navigate } = this.props.navigation;
-        const toolbar = !this.state.buscarBox
-            ? <View style={{
-                backgroundColor: '#fcfcfc', elevation: 1.5, height: 50,
-                ...Platform.select({
-                    ios: {
-                        borderBottomWidth: 0.5, marginTop: 10, borderColor: '#bdc3c7',
-                    },
-                }),
-            }} >
-                <TouchableOpacity onPress={() => this.setState({ buscarBox: true })}
-                    activeOpacity={0.8} style={{ margin: 10, alignItems: 'center', flexDirection: 'row' }}>
-                    <IconMaterial name={'magnify'} size={30} color={'#616161'} />
-                    <Text style={{ fontSize: 16, color: '#9e9e9e' }}>Buscar discotecas, bares y mas</Text>
-                </TouchableOpacity>
-            </View>
-            : <View style={{ 
-                ...Platform.select({
-                    ios: {
-                        borderBottomWidth: 0.5, marginTop: 10, borderColor: '#bdc3c7',
-                    },
-                }),backgroundColor: '#fcfcfc', elevation: 1.5, alignItems: 'center', height: 50, flexDirection: 'row' }} >
-                <TouchableOpacity onPress={() => this.setState({ buscarBox: false })}
-                    style={{ margin: 10, alignItems: 'center' }}>
-                    <IconMaterial name={'arrow-left'} size={30} color={'#616161'} />
-                </TouchableOpacity>
-                <TextInput value={this.state.textBusqueda} onChangeText={(text) => this.onBusqueda(text)}
-                    placeholder="Buscar" placeholderTextColor="#9e9e9e" style={{ width: width - 100, fontSize: 18 }} autoFocus={true} underlineColorAndroid={'transparent'} selectionColor="#616161" />
-                {this.state.textBusqueda.length > 0 &&
-                    <TouchableOpacity onPress={() => this.setState({ textBusqueda: '' })}
-                        style={{ margin: 10, alignItems: 'center' }}>
-                        <IconMaterial name={'close'} size={25} color={'#616161'} />
-                    </TouchableOpacity>}
-
-            </View>
 
         return (
             <View style={styles.container}>
+                <Toolbar navigation={navigate} banner={"Buscar"} />
                 <SearchBar
                     round
-                    containerStyle={{ ...Platform.select({
-                        ios: {
-                           marginTop: 20,
-                        },
-                    }),backgroundColor:'#FFF'}}
-                    inputStyle={{backgroundColor:'#eee'}}
+                    containerStyle={{
+                        ...Platform.select({
+                            ios: {
+                                marginTop: 0,
+                            },
+                        }), backgroundColor: '#FFF'
+                    }}
+                    inputStyle={{ backgroundColor: '#eee' }}
                     lightTheme
-                    onChangeText={(text)=>console.log(text)}
-                    onClearText={(text)=>console.log(text)}
-                    placeholder='Buscar...' />
-                <ListaEmpresas empresas={this.state.empresas} />
+                    onChangeText={(text) => this.BuscarUsuarios(text)}
+                    onClearText={(text) => console.log(text)}
+                    placeholder='Buscar lugares personas ...' />
+
+                <FlatList
+                    numColumns={2}
+                    data={this.state.empresas}
+                    renderItem={({ item }) => (
+                        <EmpresaBox empresa={item} style={styles.item} />
+                    )}
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}
+                    keyExtractor={(item, index) => index}
+                    ListFooterComponent={() =>
+                        !this.state.loadingMore ?
+                            (this.state.SeguirCargando ? null :
+                                null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
+                            : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
+                    }
+                    onEndReached={this.handleLoadMore}
+                    onEndReachedThreshold={0.1}
+                    initialNumToRender={8}
+                />
 
             </View>
         );
@@ -129,7 +200,7 @@ export default class Buscar extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFF',
+        backgroundColor: '#eee',
     },
 
 });
