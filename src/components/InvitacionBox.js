@@ -45,7 +45,7 @@ export default class InvitacionBox extends Component {
         
         return (
             <View ref='root' style={styles.container}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 0, marginTop: 5, padding: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center',width:width/2-25, marginBottom: 0, marginTop: 5, padding: 5 }}>
                     <Image source={{ uri: URL_WS_SOCKET+this.props.invitacion.photo_url }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,borderRadius:12 }} />
                     <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>{this.props.invitacion.nombre_usuario}</Text>
@@ -55,15 +55,15 @@ export default class InvitacionBox extends Component {
                         style={{ height: 100, width: width/2-20,flex:1}}  />
                  
                 </View>
-                <View style={{ flexDirection: 'column',backgroundColor:'#fafafa', padding: 5, marginLeft: 10 }}>
+                <View style={{ flexDirection: 'column',backgroundColor:'#fff', padding: 5, marginLeft: 10 }}>
                     <Text style={{ fontSize: 13, marginVertical: 3, fontWeight: 'bold', color: '#757575' }}>{this.props.invitacion.nombre_post}</Text>
                 </View>
                 <TouchableOpacity onPress={this.props.VerCodigoQR}
                     activeOpacity={0.3} style={{
-                        flexDirection: 'row', backgroundColor: '#fafafa',
+                        flexDirection: 'row', backgroundColor: '#fff',
                         alignItems: 'center', justifyContent: 'center', padding: 5
                     }}>
-                    <Icon name="ios-barcode-outline" size={40} color="#831da2" style={{ marginRight: 15 }} />
+                    <Icon name="md-barcode" size={40} color="#831da2" style={{ marginRight: 15 }} />
 
                 </TouchableOpacity>
 

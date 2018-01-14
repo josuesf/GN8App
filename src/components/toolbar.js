@@ -14,9 +14,9 @@ const {width}=Dimensions.get('window')
 
 const toolbar = ({ navigation, banner }) => (
     <View style={[styles.container]} >
-        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#831da2'}}>G N 8</Text>}
+        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:24,color:'#831da2'}}>G N 8</Text>}
         
-        {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:18,color:'#333'}}>{banner}</Text>}
+        {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:24,color:'#831da2'}}>{banner}</Text>}
     </View>
 );
 const styles = StyleSheet.create({

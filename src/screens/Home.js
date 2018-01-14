@@ -20,9 +20,11 @@ import {
     Image,
     StatusBar,
     FlatList,
+    ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconFondation from 'react-native-vector-icons/Foundation'
 import Toolbar from '../components/toolbar'
 import ListaPosts from '../components/ListaPosts'
 import PostBox from '../components/PostBox'
@@ -40,10 +42,10 @@ export default class Home extends Component<{}> {
         header: null,
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
-            <Icon
-                name={focused ? 'ios-home-outline' : 'ios-home-outline'}
-                size={26}
-                color={focused ? tintColor : '#d1c4e9'}
+            <IconFondation
+                name={focused ? 'home' : 'home'}
+                size={30}
+                color={focused ? tintColor : '#95a5a6'}
             />
         ),
     };
@@ -60,6 +62,7 @@ export default class Home extends Component<{}> {
             loading: false,
             SeguirCargando: false,
             modalCodigoQR: false,
+            categoriaSel:0,
         }
 
     }
@@ -74,7 +77,8 @@ export default class Home extends Component<{}> {
                     nombre: res.name,
                     usuario: res.username,
                     password: res.password,
-                    photoUrl: res.photo_url
+                    photoUrl: res.photo_url,
+                    es_empresa:res.es_empresa,
                 })
             }
         })
@@ -108,7 +112,7 @@ export default class Home extends Component<{}> {
                         }).catch(err => console.log(err));
                         this.setState({
                             posts: [],
-                        },()=>this.setState({
+                        }, () => this.setState({
                             posts: [...responseJson.posts],
                             buscandoPosts: false,
                             loadingMore: false,
@@ -138,7 +142,7 @@ export default class Home extends Component<{}> {
             this.setState(
                 {
                     page: this.state.page + 1,
-                    SeguirCargando:false,
+                    SeguirCargando: false,
                 },
                 () => {
                     this.CargarPosts();
@@ -244,6 +248,9 @@ export default class Home extends Component<{}> {
         })
         this.props.navigation.navigate('invitaciones')
     }
+    SeleccionarCategoria=(index)=>{
+        this.setState({categoriaSel:index})
+    }
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -253,9 +260,8 @@ export default class Home extends Component<{}> {
                     barStyle="dark-content"
                 />
                 <Toolbar navigation={navigate} banner={"GN8"} />
-
-                <TouchableOpacity onPress={this.AbrirNuevoPost}
-                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', height: 50, paddingRight: 5 }}>
+                {store.getState().es_empresa=="SI" && <TouchableOpacity onPress={this.AbrirNuevoPost}
+                    activeOpacity={0.7} style={{ backgroundColor: '#FFF', height: 50, }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
                         {/*<Image source={{ uri: store.getState().photoUrl }}
                             style={{ width: 28, height: 28, }} />*/}
@@ -263,12 +269,12 @@ export default class Home extends Component<{}> {
                             style={{ height: 35, width: 35 }}
                             resizeMode='contain' />
                         <View style={{
-                            borderWidth: 1, borderColor: '#831DA2',
+                            borderWidth: 1.5, borderColor: '#95a5a6',
                             backgroundColor: '#FFF',
                             padding: 5, borderRadius: 10, marginHorizontal: 10,
                             flex: 1,
                         }}>
-                            <Text style={{ marginLeft: 5, color: '#831DA2' }}>
+                            <Text style={{ marginLeft: 5, alignSelf: 'center', fontWeight: 'bold', color: '#95a5a6' }}>
                                 Quieres publicar tu evento?
                             </Text>
                         </View>
@@ -277,7 +283,52 @@ export default class Home extends Component<{}> {
                             resizeMode='contain' />
 
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity>}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(0)} style={{
+                        backgroundColor: '#95a5a6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Todo</Text>
+                        {this.state.categoriaSel==0 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(1)} style={{
+                        backgroundColor: '#9b59b6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Comida</Text>
+                        {this.state.categoriaSel==1 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(2)} style={{
+                        backgroundColor: '#95a5a6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Bebidas</Text>
+                        {this.state.categoriaSel==2 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(3)} style={{
+                        backgroundColor: '#9b59b6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Discotecas</Text>
+                        {this.state.categoriaSel==3 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(4)} style={{
+                        backgroundColor: '#95a5a6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Bares</Text>
+                        {this.state.categoriaSel==4 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(5)}style={{
+                        backgroundColor: '#9b59b6',alignItems:'center',
+                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                    }}>
+                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Ropas</Text>
+                        {this.state.categoriaSel==5 && <IconFondation name="check" size={20} color="#FFF"/>}
+                    </TouchableOpacity>
+                </ScrollView>
+                
                 {this.state.buscandoPosts && <ActivityIndicator color="#831DA2" size="large" style={{ marginTop: 10 }} />}
 
                 <FlatList
@@ -325,14 +376,16 @@ export default class Home extends Component<{}> {
                                 </View>}
                         </View>
                         {!this.state.codigoRecuperado && !this.state.recuperandoCodigo &&
-                            < View style={{alignItems:'center'}}>
+                            < View style={{ alignItems: 'center' }}>
                                 <TouchableOpacity onPress={this.GenerarCodigoQR}
                                     activeOpacity={0.7}
-                                    style={{ backgroundColor: "#831da2", flexDirection:'row',
-                                    alignItems:'center',
-                                    borderRadius: 10, padding: 10, marginTop: 10, }}>
-                                    <Icon name='ios-barcode-outline' size={25} color="white"/>
-                                    <Text style={{ color: '#FFF',marginHorizontal:10 }}>OBTENER CODIGO</Text>
+                                    style={{
+                                        backgroundColor: "#831da2", flexDirection: 'row',
+                                        alignItems: 'center',
+                                        borderRadius: 10, padding: 10, marginTop: 10,
+                                    }}>
+                                    <Icon name='ios-barcode-outline' size={25} color="white" />
+                                    <Text style={{ color: '#FFF', marginHorizontal: 10 }}>OBTENER CODIGO</Text>
                                 </TouchableOpacity>
                             </View>}
                     </View>

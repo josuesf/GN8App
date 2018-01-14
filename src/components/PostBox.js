@@ -129,16 +129,16 @@ export default class PostBox extends Component {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5, marginLeft: 10 }}>
                     <TouchableOpacity onPress={() => this.darGenial(this.props.post._id)}>
-                        <Icon name={esGenial ? "ios-star" : "ios-star-outline"} size={30} color={esGenial ? "#FFC300" : "#831DA2"} style={{ marginRight: 15 }} />
+                        <IconMaterial name={esGenial ? "star" : "star-outline"} size={35} color={esGenial ? "#FFC300" : "#95a5a6"} style={{ marginRight: 10 }} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.props.navigate('comentarios', { id_post: this.props.post._id, commentsCount: comentarios })}>
-                        <Icon name={"ios-text-outline"} size={30} color={comentarios > 0 ? "#831DA2" : "#831DA2"} style={{ marginRight: 15 }} />
+                        <IconMaterial name={"comment-outline"} size={30} color={comentarios > 0 ? "#95a5a6" : "#95a5a6"} style={{ marginRight: 15 }} />
                     </TouchableOpacity>
 
                     {/*<IconMaterial name="beer" size={30} color="#d1c4e9" style={{ marginRight: 15 }} />*/}
                     {this.props.post.codigoqr &&
                         <TouchableOpacity onPress={this.props.ObtenerCodigoQR}>
-                            <Icon name="ios-barcode-outline" size={30} color="#831DA2" style={{ marginRight: 15 }} />
+                            <Icon name="md-barcode" size={30} color="#95a5a6" style={{ marginRight: 15 }} />
                         </TouchableOpacity>}
                     
                 </View>

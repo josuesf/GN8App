@@ -22,7 +22,8 @@ const reducer = (state, action) => {
             nombre: action.nombre,
             usuario: action.usuario,
             password: action.password,
-            photoUrl: action.photoUrl
+            photoUrl: action.photoUrl,
+            es_empresa:action.es_empresa
         }
     }
     if (action.type === "ACTUALIZAR_INVITACIONES") {

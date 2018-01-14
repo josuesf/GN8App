@@ -40,9 +40,9 @@ const Main = TabNavigator({
     animationEnabled: false,
     swipeEnabled:false,
     tabBarOptions: {
-      activeTintColor: '#831DA2',
+      activeTintColor: '#9b59b6',
       labelStyle: {
-        fontSize: 12,
+        fontSize: 9,
       },
       style: {
         backgroundColor: '#fcfcfc',

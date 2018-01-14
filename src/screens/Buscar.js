@@ -22,7 +22,9 @@ import {
     AsyncStorage,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import IconFa from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconFondation from 'react-native-vector-icons/Foundation'
 import ListaEmpresas from '../components/ListaEmpresas'
 import Toolbar from '../components/toolbar'
 import { SearchBar } from "react-native-elements";
@@ -54,10 +56,10 @@ export default class Buscar extends Component<{}> {
         headerTintColor: 'purple',
         header: null,
         tabBarIcon: ({ tintColor, focused }) => (
-            <Icon
-                name={focused ? 'ios-search-outline' : 'ios-search-outline'}
-                size={25}
-                color={focused ? tintColor : '#d1c4e9'}
+            <IconFondation
+                name={focused ? 'magnifying-glass' : 'magnifying-glass'}
+                size={30}
+                color={focused ? tintColor : '#95a5a6'}
             />
         ),
 
@@ -156,9 +158,11 @@ export default class Buscar extends Component<{}> {
 
         return (
             <View style={styles.container}>
-                <Toolbar navigation={navigate} banner={"Buscar"} />
+                <Toolbar navigation={navigate} banner={"B U S C A R"} />
                 <SearchBar
-                    round
+                    
+                    animateTransitions={true}
+                    animationType="spring"
                     containerStyle={{
                         ...Platform.select({
                             ios: {
@@ -173,7 +177,6 @@ export default class Buscar extends Component<{}> {
                     placeholder='Buscar lugares personas ...' />
 
                 <FlatList
-                    numColumns={2}
                     data={this.state.empresas}
                     renderItem={({ item }) => (
                         <EmpresaBox empresa={item} style={styles.item} />

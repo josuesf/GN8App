@@ -40,9 +40,9 @@ export default class Invitaciones extends Component<{}> {
     header: null,
     tabBarIcon: ({ tintColor, focused }) => (
       <Icon
-        name={focused ? 'ios-barcode-outline' : 'ios-barcode-outline'}
-        size={25}
-        color={focused ? tintColor : '#d1c4e9'}
+        name={focused ? 'md-barcode' : 'md-barcode'}
+        size={26}
+        color={focused ? tintColor : '#95a5a6'}
       />
     ),
   };
@@ -206,10 +206,9 @@ export default class Invitaciones extends Component<{}> {
 
     return (
       <View style={styles.container} ref="invitaciones">
-        <Toolbar navigation={navigate} banner={"G N 8 Codigos"} />
+        <Toolbar navigation={navigate} banner={"C O D I G O S"} />
         {(es_empresa == "SI" && scanning) ?
           <View>
-            <Text style={{ padding: 10, fontWeight: 'bold', fontSize: 18 }}>Escaner</Text>
             <View style={styles.rectangleContainer}>
               <Camera style={styles.camera} type={this.state.cameraType}
                 onBarCodeRead={this._handleBarCodeRead.bind(this)}>
@@ -220,7 +219,7 @@ export default class Invitaciones extends Component<{}> {
             </View>
           </View> :
           <View style={{ alignItems: 'center' }}>
-            {(buscandoInvitacion ) ?
+            {(buscandoInvitacion) ?
               <View>
                 <Image source={require('../assets/img/loading.gif')}
                   style={{ marginVertical: 10, height: 80, width: 80, alignSelf: 'center' }} />
@@ -246,9 +245,6 @@ export default class Invitaciones extends Component<{}> {
             }
           </View>
         }
-        <Text style={{ padding: 10, fontWeight: 'bold', fontSize: 18 }}>
-          Mis codigos
-        </Text>
         {this.state.invitaciones.length == 0 ?
           <View style={{ alignItems: 'center' }}>
             <Icon name="ios-sad-outline" size={50} color="#831da2" />

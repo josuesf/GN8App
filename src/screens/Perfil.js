@@ -23,6 +23,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconFondation from 'react-native-vector-icons/Foundation'
 import Toolbar from '../components/toolbar'
 import { NavigationActions } from 'react-navigation'
 import { URL_WS, URL_WS_SOCKET } from '../Constantes'
@@ -41,10 +42,10 @@ export default class Perfil extends Component<{}> {
         header: null,
         tabBarLabel: 'Home',
         tabBarIcon: ({ tintColor, focused }) => (
-            <Icon
-                name={focused ? 'ios-person-outline' : 'ios-person-outline'}
-                size={25}
-                color={focused ? tintColor : '#d1c4e9'}
+            <IconFondation
+                name={focused ? 'torso' : 'torso'}
+                size={30}
+                color={focused ? tintColor : '#95a5a6'}
             />
         ),
     };
@@ -61,7 +62,7 @@ export default class Perfil extends Component<{}> {
             avatarSource: null,
             videoSource: null,
             dataImg: null,
-            selectedIndex: 1,
+            selectedIndex: 0,
             refreshing: false,
             loadingMore: false,
             SeguirCargando: false,
@@ -86,11 +87,12 @@ export default class Perfil extends Component<{}> {
                     nombre: res.name,
                     usuario: res.username,
                     password: res.password,
-                    photoUrl: res.photo_url
+                    photoUrl: res.photo_url,
+                    es_empresa: res.es_empresa
                 },
                     () => {
                         this.CargarPosts()
-                        
+
                     }
                 )
             }
@@ -178,7 +180,7 @@ export default class Perfil extends Component<{}> {
     }
     updateIndex = (selectedIndex) => {
         this.setState({ selectedIndex })
-        if(selectedIndex==0) this.CargarInvitaciones()
+        if (selectedIndex == 0) this.CargarInvitaciones()
     }
 
 
@@ -240,14 +242,16 @@ export default class Perfil extends Component<{}> {
             <Image source={{ uri: URL_WS_SOCKET + this.state.photoUrl }} style={{ borderRadius: 10, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
-        const component1 = () => <Icon name="ios-barcode-outline" size={30} />
-        const component2 = () => <Icon name="ios-list-outline" size={30} />
-        const component3 = () => <Icon name="ios-bookmark-outline" size={30} />
-        const buttons = [{ element: component1 }, { element: component2 }, { element: component3 }]
+        const component1 = () => <IconMaterial name="qrcode-scan" size={28} color="#95a5a6" />
+        const component2 = () => <Icon name="md-list" size={30} color="#95a5a6" />
+        const component3 = () => <Icon name="md-bookmark" size={30} color="#95a5a6" />
+        const buttons = this.state.es_empresa == "SI" ?
+            [{ element: component1 }, { element: component2 }, { element: component3 }]
+            : [{ element: component1 }, { element: component3 }]
         const { selectedIndex } = this.state
         return (
             <View style={styles.container} ref="perfil">
-                <Toolbar navigation={navigate} banner={"Perfil"} />
+                <Toolbar navigation={navigate} banner={"P E R F I L"} />
 
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -293,7 +297,7 @@ export default class Perfil extends Component<{}> {
                         buttons={buttons}
                         containerStyle={{ height: 40 }} />
                 </View>
-                {this.state.selectedIndex == 1 && <FlatList
+                {this.state.selectedIndex == 1 && this.state.es_empresa == "SI" && <FlatList
                     data={this.state.posts}
                     renderItem={({ item }) => (
                         <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
@@ -312,33 +316,50 @@ export default class Perfil extends Component<{}> {
                     onEndReachedThreshold={10}
                     initialNumToRender={10}
                 />}
-                {this.state.selectedIndex == 0 && <FlatList
-                    numColumns={3}
-                    data={this.state.invitaciones}
-                    renderItem={({ item }) => (
-                        /*<InvitacionBox invitacion={item} navigate={navigate} 
-                        VerCodigoQR={() => this.VerCodigoQR(item)} />*/
-                        <View style={{ padding: 10 }}>
-                            <QRCode
-                                value={item._id}
-                                size={width / 3 - 20}
-                                bgColor='#d1c4e9'
-                                fgColor='white' />
-                        </View>
-                    )}
-                    refreshing={this.state.refreshing_qrs}
-                    onRefresh={this._onRefresh_qrs}
-                    keyExtractor={(item, index) => index}
-                    ListFooterComponent={() =>
-                        !this.state.loadingMore_qrs ?
-                            (this.state.SeguirCargando_qrs ? null :
-                                null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                            : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
-                    }
-                    onEndReached={this.handleLoadMore_qrs}
-                    onEndReachedThreshold={10}
-                    initialNumToRender={10}
-                />}
+                {this.state.selectedIndex == 0 &&
+                    <View><FlatList
+                        numColumns={3}
+                        data={this.state.invitaciones}
+                        renderItem={({ item }) => (
+                            /*<InvitacionBox invitacion={item} navigate={navigate} 
+                            VerCodigoQR={() => this.VerCodigoQR(item)} />*/
+                            <View style={{ padding: 10 }}>
+                                <QRCode
+                                    value={item._id}
+                                    size={width / 3 - 20}
+                                    bgColor='#d1c4e9'
+                                    fgColor='white' />
+                            </View>
+                        )}
+                        refreshing={this.state.refreshing_qrs}
+                        onRefresh={this._onRefresh_qrs}
+                        keyExtractor={(item, index) => index}
+                        ListFooterComponent={() =>
+                            !this.state.loadingMore_qrs ?
+                                (this.state.SeguirCargando_qrs ? null :
+                                    null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
+                                : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
+                        }
+                        onEndReached={this.handleLoadMore_qrs}
+                        onEndReachedThreshold={10}
+                        initialNumToRender={10}
+                    />
+                        {(this.state.invitaciones.length == 0) && <View style={{ alignItems: 'center', marginTop: 20 }}>
+                            <Icon name="ios-sad-outline" size={50} color="#831da2" />
+                            <TouchableOpacity onPress={() => navigate('home')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    borderRadius: 10,
+                                    borderWidth: 1, borderColor: '#831da2', padding: 10
+                                }}>
+
+                                <Text style={{ color: '#831da2' }}>OBTENER CODIGOS</Text>
+                            </TouchableOpacity>
+
+                        </View>}
+                    </View>
+                }
 
             </View>
         );
