@@ -20,6 +20,7 @@ import {
     ActivityIndicator,
     ScrollView,
 } from 'react-native';
+import {CheckBox} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toolbar from '../components/toolbar'
@@ -49,6 +50,11 @@ export default class EditarPerfil extends Component<{}> {
             avatarSource: null,
             videoSource: null,
             dataImg: null,
+            checkBar:false,
+            checkBebidas:false,
+            checkComidas:false,
+            checkDiscoteca:false,
+            checkRopa:false,
         }
     }
     componentWillMount() {
@@ -61,7 +67,8 @@ export default class EditarPerfil extends Component<{}> {
                     nombre: res.name,
                     usuario: res.username,
                     password: res.password,
-                    photoUrl: res.photo_url
+                    photoUrl: res.photo_url,
+                    es_empresa: res.es_empresa,
                 })
             }
         })
@@ -224,6 +231,7 @@ export default class EditarPerfil extends Component<{}> {
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
+
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         this.setState({ cargando: false })
@@ -276,6 +284,68 @@ export default class EditarPerfil extends Component<{}> {
                         <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.usuario} onChangeText={(text)=>this.setState({usuario:text})} />
                         <FormLabel>Correo</FormLabel>
                         <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.correo} onChangeText={(text)=>this.setState({correo:text})} />
+                        
+                        {
+                            (this.state.es_empresa=="SI") && 
+                            <View>
+                                <FormLabel>Servicios</FormLabel>
+                                <CheckBox  title='Bar'
+                                checked={this.state.checkBar}
+                                size={20}
+                                checkedColor='purple'
+                                textStyle={
+                                    {
+                                        fontSize:12,
+                                    }}
+                                onPress = {
+                                    ()=>{this.setState({checkBar:!this.state.checkBar})}
+                                }/>
+                                <CheckBox  title='Bebidas'
+                                checked={this.state.checkBebidas}
+                                size={20}
+                                checkedColor='purple'
+                                textStyle={
+                                    {
+                                        fontSize:12,
+                                    }}
+                                onPress = {
+                                    ()=>{this.setState({checkBebidas:!this.state.checkBebidas})}
+                                }/>
+                                <CheckBox  title='Comidas'
+                                checked={this.state.checkComidas}
+                                size={20}
+                                checkedColor='purple'
+                                textStyle={
+                                    {
+                                        fontSize:12,
+                                    }}
+                                onPress = {
+                                    ()=>{this.setState({checkComidas:!this.state.checkComidas})}
+                                }/>
+                                <CheckBox  title='Discoteca'
+                                checked={this.state.checkDiscoteca}
+                                size={20}
+                                checkedColor='purple'
+                                textStyle={
+                                    {
+                                        fontSize:12,
+                                    }}
+                                onPress = {
+                                    ()=>{this.setState({checkDiscoteca:!this.state.checkDiscoteca})}
+                                }/>
+                                <CheckBox  title='Ropa'
+                                checked={this.state.checkRopa}
+                                size={20}
+                                checkedColor='purple'
+                                textStyle={
+                                    {
+                                        fontSize:12,
+                                    }}
+                                onPress = {
+                                    ()=>{this.setState({checkRopa:!this.state.checkRopa})}
+                                }/>
+                            </View>
+                        }
                         
                         
                         <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginTop: 50, marginBottom: 50 }}>
