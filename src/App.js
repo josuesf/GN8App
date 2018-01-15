@@ -14,6 +14,7 @@ import Registro from './screens/Registro'
 import RegistroDetalle from './screens/RegistroDetalle'
 import Splash from './screens/Splash'
 import EditarPerfil from './screens/EditarPerfil';
+import EditarPerfilEmpresa from './screens/EditarPerfilEmpresa'
 import RegistroEmpresa from './screens/RegistroEmpresa';
 import Comentarios from './screens/Comentarios'
 import DieronLike from './screens/DieronLike';
@@ -77,6 +78,9 @@ const App = StackNavigator(
     },
     editPerfil:{
       screen: EditarPerfil
+    },
+    editPerfilEmpresa:{
+      screen: EditarPerfilEmpresa,
     },
     registroEmpresa:{
       screen:RegistroEmpresa

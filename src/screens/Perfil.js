@@ -278,7 +278,12 @@ export default class Perfil extends Component<{}> {
                         <Text style={{ color: '#333', fontWeight: '900', width: width / 2 }}>{store.getState().nombre}</Text>
                         <Text style={{ color: '#BDBDBD' }}>{store.getState().usuario}</Text>
                         <TouchableOpacity
-                            onPress={() => navigate('editPerfil')}
+                            onPress={() => {
+                                if(this.state.es_empresa=='SI')
+                                    navigate('editPerfilEmpresa')
+                                else
+                                    navigate('editPerfil')
+                            }}
                             style={{ marginTop: 10 }}>
                             <Text style={{ color: '#9b59b6', fontWeight: 'bold' }}>Editar Perfil</Text>
                         </TouchableOpacity>
