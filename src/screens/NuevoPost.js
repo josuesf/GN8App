@@ -197,11 +197,6 @@ export default class NuevoPost extends Component {
                         value={this.state.nombre}
                         onChangeText={(text) => this.setState({ nombre_post: text, error_nombre: false })} />
                     {this.state.error_nombre && <FormValidationMessage>Este campo es obligatorio</FormValidationMessage>}
-
-                    <FormLabel labelStyle={{ color: '#7f8c8d', fontSize: 15 }}>• Describa brevemente su evento</FormLabel>
-                    <FormInput ref='descripcionInput' underlineColorAndroid="#eee"
-                        onChangeText={(text) => this.setState({ descripcion: text, error_descripcion: false })} />
-                    {this.state.error_descripcion && <FormValidationMessage>Este campo es obligatorio</FormValidationMessage>}
                     <CheckBox
                         containerStyle={{ marginTop: 10, backgroundColor: '#FFF', borderWidth: 0 }}
                         textStyle={{ color: '#7f8c8d', fontSize: 15 }}

@@ -231,7 +231,7 @@ export default class EditarPerfil extends Component<{}> {
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
-
+                        es_empresa:user.es_empresa
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         this.setState({ cargando: false })
@@ -254,7 +254,7 @@ export default class EditarPerfil extends Component<{}> {
     render() {
         const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: URL_WS_SOCKET+this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
+            <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (

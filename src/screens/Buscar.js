@@ -25,7 +25,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconFa from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFondation from 'react-native-vector-icons/Foundation'
-import ListaEmpresas from '../components/ListaEmpresas'
 import Toolbar from '../components/toolbar'
 import { SearchBar } from "react-native-elements";
 import EmpresaBox from '../components/EmpresaBox'
@@ -38,8 +37,8 @@ export default class Buscar extends Component<{}> {
             textBusqueda: '',
             empresas: [],
             page: 1,
-            refreshing:false,
-            SeguirCargando:false
+            refreshing: false,
+            SeguirCargando: false
         }
     }
     componentWillMount() {
@@ -82,13 +81,13 @@ export default class Buscar extends Component<{}> {
             .then(responseJson => {
                 if (responseJson.res == "ok") {
                     if (this.state.page == 1) {
-                        console.log("Empresas",this.state.page)
+                        console.log("Empresas", this.state.page)
                         AsyncStorage.setItem('EMPRESAS', JSON.stringify(responseJson.empresas), () => {
                             console.log('Se guardaron las publicaciones')
                         }).catch(err => console.log(err));
                         this.setState({
                             empresas: [],
-                        },()=>this.setState({
+                        }, () => this.setState({
                             empresas: [...responseJson.empresas],
                             loadingMore: false,
                             SeguirCargando: responseJson.empresas.length != 0 ? true : false
@@ -107,7 +106,7 @@ export default class Buscar extends Component<{}> {
             })
     }
     BuscarUsuarios = (text) => {
-        this.setState({ loadingMore: true,textBusqueda:text })
+        this.setState({ loadingMore: true, textBusqueda: text })
         const parametros = {
             method: 'POST',
             headers: {
@@ -115,7 +114,7 @@ export default class Buscar extends Component<{}> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                name:text
+                name: text
             })
         }
         fetch(URL_WS_SOCKET + "/ws/buscarUsuarios", parametros)
@@ -124,7 +123,7 @@ export default class Buscar extends Component<{}> {
                 if (responseJson.res == "ok") {
                     this.setState({
                         empresas: [],
-                    },()=>this.setState({
+                    }, () => this.setState({
                         empresas: [...responseJson.empresas],
                         loadingMore: false,
                     }))
@@ -153,6 +152,10 @@ export default class Buscar extends Component<{}> {
     onBusqueda = (text) => {
         this.setState({ textBusqueda: text })
     }
+    VerPerfil = (id) => {
+        //if (store.getState().id != id)
+            this.props.navigation.navigate('vistaPerfil', { id_usuario: id })
+    }
     render() {
         const { navigate } = this.props.navigation;
 
@@ -160,7 +163,7 @@ export default class Buscar extends Component<{}> {
             <View style={styles.container}>
                 <Toolbar navigation={navigate} banner={"B U S C A R"} />
                 <SearchBar
-                    
+
                     animateTransitions={true}
                     animationType="spring"
                     containerStyle={{
@@ -178,8 +181,12 @@ export default class Buscar extends Component<{}> {
 
                 <FlatList
                     data={this.state.empresas}
+
                     renderItem={({ item }) => (
-                        <EmpresaBox empresa={item} style={styles.item} />
+                        <TouchableOpacity activeOpacity={0.7}
+                            onPress={() => this.VerPerfil(item._id)}>
+                            <EmpresaBox empresa={item} style={styles.item} />
+                        </TouchableOpacity>
                     )}
                     refreshing={this.state.refreshing}
                     onRefresh={this._onRefresh}

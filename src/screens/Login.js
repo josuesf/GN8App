@@ -186,6 +186,7 @@ export default class Login extends Component<{}> {
                         photo_url: user.photo_url,
                         es_empresa:user.es_empresa,
                     }
+                    console.log(user_data)
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         const main = NavigationActions.reset({
                             index: 0,
@@ -204,6 +205,7 @@ export default class Login extends Component<{}> {
                 this.setState({ cargando: false })
             })
             .catch((error) => {
+                console.log(error)
                 this.setState({ cargando: false, progressVisible: false })
                 Alert.alert('Error', 'Ocurrio un error, compruebe su conexion a internet')
 

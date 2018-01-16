@@ -69,7 +69,7 @@ export default class DieronLike extends Component {
                         (
                             item.like && <ListItem
                                 roundAvatar
-                                avatar={{ uri: URL_WS_SOCKET+item.photo_url }}
+                                avatar={{ uri: item.photo_url }}
                                 key={item.id_user}
                                 title={item.nombre}
                                 hideChevron

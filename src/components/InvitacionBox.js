@@ -39,19 +39,19 @@ export default class InvitacionBox extends Component {
             (error) => console.log('error'))
     }
     componentWillMount(){
-        this.getHeight(URL_WS_SOCKET+this.props.invitacion.photo_post)
+        this.getHeight(this.props.invitacion.photo_post)
     }
     render() {
         
         return (
             <View ref='root' style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center',width:width/2-25, marginBottom: 0, marginTop: 5, padding: 5 }}>
-                    <Image source={{ uri: URL_WS_SOCKET+this.props.invitacion.photo_url }}
+                    <Image source={{ uri: this.props.invitacion.photo_url }}
                         style={{ width: AVATAR_SIZE, height: AVATAR_SIZE,borderRadius:12 }} />
                     <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>{this.props.invitacion.nombre_usuario}</Text>
                 </View>
                 <View style={{flexDirection:'row',alignItems:'center',marginBottom:10,marginTop:5,padding:5}}>
-                <Image source={{ uri: URL_WS_SOCKET+this.props.invitacion.photo_post }}
+                <Image source={{ uri: this.props.invitacion.photo_post }}
                         style={{ height: 100, width: width/2-20,flex:1}}  />
                  
                 </View>

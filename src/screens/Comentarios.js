@@ -15,7 +15,6 @@ import {
     Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'
-import CommentList from '../components/CommentList'
 import SocketIOClient from 'socket.io-client';
 import store from '../store';
 import Comment from '../components/Comment'
@@ -148,7 +147,7 @@ export default class Comentarios extends Component {
                         (
                             <Comment text={item.text} 
                                 user={item.user}
-                                avatar={URL_WS_SOCKET+item.photo_url}
+                                avatar={item.photo_url}
                                 fecha={moment(new Date(item.createdAt)).fromNow()} />
                         )
                     }

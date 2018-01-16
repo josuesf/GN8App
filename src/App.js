@@ -18,6 +18,7 @@ import RegistroEmpresa from './screens/RegistroEmpresa';
 import Comentarios from './screens/Comentarios'
 import DieronLike from './screens/DieronLike';
 import NuevoPost from './screens/NuevoPost';
+import VistaPerfil from './screens/VistaPerfil';
 const Main = TabNavigator({
   home: {
     screen: Home,
@@ -92,6 +93,9 @@ const App = StackNavigator(
     },
     lectorQR:{
       screen:LectorQR
+    },
+    vistaPerfil:{
+      screen:VistaPerfil
     }
   },
   {

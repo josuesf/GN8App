@@ -23,8 +23,9 @@ export default class EmpresaBox extends Component {
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 0, marginTop: 5, padding: 5 }}>
-                    <Image source={{ uri: URL_WS_SOCKET + this.props.empresa.photo_url }}
-                        style={{ borderRadius: 10, width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
+                    <Image defaultSource={require('../assets/img/user_anonimo.jpg')}
+                        source={{ uri:  this.props.empresa.photo_url||'https://s3-sa-east-1.amazonaws.com/gn8bucket/user_anonimo.jpg' }}
+                        style={{ backgroundColor: '#f1eff0',borderRadius: 10, width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
                         <Text style={{ color: '#424242', fontWeight: 'bold' }}>{this.props.empresa.name}</Text>

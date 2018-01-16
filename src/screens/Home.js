@@ -26,7 +26,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFondation from 'react-native-vector-icons/Foundation'
 import Toolbar from '../components/toolbar'
-import ListaPosts from '../components/ListaPosts'
 import PostBox from '../components/PostBox'
 import SocketIOClient from 'socket.io-client';
 import store from '../store';
@@ -70,6 +69,7 @@ export default class Home extends Component<{}> {
         AsyncStorage.getItem("USER_DATA", (err, res) => {
             if (res != null) {
                 res = JSON.parse(res)
+                console.log(res)
                 store.dispatch({
                     type: "SET_USER",
                     id: res.id,
@@ -284,51 +284,52 @@ export default class Home extends Component<{}> {
 
                     </View>
                 </TouchableOpacity>}
+                <View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(0)} style={{
                         backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Todo</Text>
-                        {this.state.categoriaSel==0 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==0 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(1)} style={{
                         backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Comida</Text>
-                        {this.state.categoriaSel==1 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==1 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(2)} style={{
                         backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Bebidas</Text>
-                        {this.state.categoriaSel==2 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==2 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(3)} style={{
                         backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Discotecas</Text>
-                        {this.state.categoriaSel==3 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==3 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(4)} style={{
                         backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Bares</Text>
-                        {this.state.categoriaSel==4 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==4 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                     <TouchableOpacity onPress={()=>this.SeleccionarCategoria(5)}style={{
                         backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, padding: 16, borderRadius: 10, justifyContent: 'center'
+                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
                     }}>
                         <Text style={{ color: '#FFF', fontWeight: '900' }}>Ropas</Text>
-                        {this.state.categoriaSel==5 && <IconFondation name="check" size={20} color="#FFF"/>}
+                        {this.state.categoriaSel==5 && <IconMaterial name="circle" size={10} color="#FFF"/>}
                     </TouchableOpacity>
                 </ScrollView>
-                
+                </View>
                 {this.state.buscandoPosts && <ActivityIndicator color="#831DA2" size="large" style={{ marginTop: 10 }} />}
 
                 <FlatList
