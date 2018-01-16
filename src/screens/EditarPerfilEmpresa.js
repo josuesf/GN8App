@@ -34,7 +34,7 @@ import { FormLabel, FormInput,FormValidationMessage } from 'react-native-element
 const { width, height } = Dimensions.get('window')
 export default class EditarPerfil extends Component<{}> {
     static navigationOptions = {
-        title: 'Editar Perfil',
+        title: 'Editar Perfil de Empresa',
         headerTintColor: 'purple',
     };
     constructor() {
@@ -46,6 +46,7 @@ export default class EditarPerfil extends Component<{}> {
             usuario: '',
             photoUrl: store.getState().photoUrl,
             password: '',
+            categorias:'',
             cargando: false,
             avatarSource: null,
             videoSource: null,
@@ -59,8 +60,11 @@ export default class EditarPerfil extends Component<{}> {
     }
     componentWillMount() {
         AsyncStorage.getItem("USER_DATA", (err, res) => {
+            
             if (res != null) {
                 res = JSON.parse(res)
+                var categoriasSplit=res.categorias
+                categoriasSplit=categoriasSplit.split(' ')
                 this.setState({
                     id: res.id,
                     correo: res.email,
@@ -69,6 +73,12 @@ export default class EditarPerfil extends Component<{}> {
                     password: res.password,
                     photoUrl: res.photo_url,
                     es_empresa: res.es_empresa,
+                    categorias:res.categorias,
+                    checkBar:categoriasSplit.indexOf('BAR')!=-1,
+                    checkBebidas:categoriasSplit.indexOf('BEBIDAS')!=-1,
+                    checkComidas:categoriasSplit.indexOf('COMIDAS')!=-1,
+                    checkDiscoteca:categoriasSplit.indexOf('DISCOTECA')!=-1,
+                    checkRopa:categoriasSplit.indexOf('ROPA')!=-1,
                 })
             }
         })
@@ -202,7 +212,11 @@ export default class EditarPerfil extends Component<{}> {
 
     }
     guardarCambios = () => {
-        this.setState({ cargando: true })
+        this.setState({ 
+            cargando: true,
+            categorias: `${this.state.checkBar?'BAR ':''}${this.state.checkBebidas?'BEBIDAS ':''}${this.state.checkComidas?'COMIDAS ':''}${this.state.checkDiscoteca?'DISCOTECA ':''}${this.state.checkRopa?'ROPA ':''}`
+        })
+
         const parametros = {
             method: 'POST',
             headers: {
@@ -216,6 +230,7 @@ export default class EditarPerfil extends Component<{}> {
                 email: (this.state.correo).toLocaleLowerCase().trim(),
                 password: this.state.password,
                 photo_url: this.state.photoUrl,
+                categorias: this.state.categorias,
             })
         }
         fetch(URL_WS + '/ws/updateUser', parametros)
@@ -231,7 +246,7 @@ export default class EditarPerfil extends Component<{}> {
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
-                        es_empresa:user.es_empresa
+                        categorias: user.categorias,
                     }
                     AsyncStorage.setItem('USER_DATA', JSON.stringify(user_data), () => {
                         this.setState({ cargando: false })
@@ -254,7 +269,7 @@ export default class EditarPerfil extends Component<{}> {
     render() {
         const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
+            <Image source={{ uri: URL_WS_SOCKET+this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (
@@ -286,6 +301,72 @@ export default class EditarPerfil extends Component<{}> {
                         <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.correo} onChangeText={(text)=>this.setState({correo:text})} />
                         
                         
+                        <FormLabel>Servicios de Empresa</FormLabel>
+                        <CheckBox  title='Bar'
+                            checked={this.state.checkBar}
+                            size={20}
+                            checkedColor='purple'
+                            textStyle={
+                                {
+                                    fontSize:12,
+                                }
+                            }
+                            onPress = {
+                                ()=>{this.setState({checkBar:!this.state.checkBar})}
+                            }
+                        />
+                        <CheckBox  title='Bebidas'
+                            checked={this.state.checkBebidas}
+                            size={20}
+                            checkedColor='purple'
+                            textStyle={
+                                {
+                                    fontSize:12,
+                                }
+                            }
+                            onPress = {
+                                ()=>{this.setState({checkBebidas:!this.state.checkBebidas})}
+                            }
+                        />
+                        <CheckBox  title='Comidas'
+                            checked={this.state.checkComidas}
+                            size={20}
+                            checkedColor='purple'
+                            textStyle={
+                                {
+                                    fontSize:12,
+                                }
+                            }
+                            onPress = {
+                                ()=>{this.setState({checkComidas:!this.state.checkComidas})}
+                            }
+                        />
+                        <CheckBox  title='Discoteca'
+                            checked={this.state.checkDiscoteca}
+                            size={20}
+                            checkedColor='purple'
+                            textStyle={
+                                {
+                                    fontSize:12,
+                                }
+                            }
+                            onPress = {
+                                ()=>{this.setState({checkDiscoteca:!this.state.checkDiscoteca})}
+                            }
+                        />
+                        <CheckBox  title='Ropa'
+                            checked={this.state.checkRopa}
+                            size={20}
+                            checkedColor='purple'
+                            textStyle={
+                                {
+                                    fontSize:12,
+                                }
+                            }
+                            onPress = {
+                                ()=>{this.setState({checkRopa:!this.state.checkRopa})}
+                            }
+                        />
                         
                         
                         <View style={{ flexDirection: 'row', width, justifyContent: 'center', marginTop: 50, marginBottom: 50 }}>
