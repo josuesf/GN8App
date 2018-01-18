@@ -39,7 +39,11 @@ export default class Home extends Component<{}> {
         title: 'Home',
         headerTintColor: 'purple',
         header: null,
-        tabBarLabel: 'Home',
+        tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
+            <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+                HOME
+            </Text>
+        ):"HOME",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
                 name={focused ? 'home' : 'home'}
@@ -251,6 +255,9 @@ export default class Home extends Component<{}> {
     SeleccionarCategoria=(index)=>{
         this.setState({categoriaSel:index})
     }
+    VerUbicacion=(lat,long)=>{
+        this.props.navigation.navigate('mapa',{latitude:lat,longitude:long})
+    }
     render() {
         const { navigate } = this.props.navigation;
         return (
@@ -335,7 +342,9 @@ export default class Home extends Component<{}> {
                 <FlatList
                     data={this.state.posts}
                     renderItem={({ item }) => (
-                        <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
+                        <PostBox post={item} navigate={navigate} 
+                        ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} 
+                        VerUbicacion={()=>this.VerUbicacion(item.latitude,item.longitude)}/>
 
                     )}
                     refreshing={this.state.refreshing}

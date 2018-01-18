@@ -37,10 +37,14 @@ import QRCode from 'react-native-qrcode';
 const { width, height } = Dimensions.get('window')
 export default class Perfil extends Component<{}> {
     static navigationOptions = {
-        title: 'Home',
+        title: 'Perfil',
         headerTintColor: 'purple',
         header: null,
-        tabBarLabel: 'Home',
+        tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
+            <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+                PERFIL
+            </Text>
+        ):"PERFIL",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
                 name={focused ? 'torso' : 'torso'}
@@ -251,7 +255,7 @@ export default class Perfil extends Component<{}> {
         const { selectedIndex } = this.state
         return (
             <View style={styles.container} ref="perfil">
-                <Toolbar navigation={navigate} banner={"P E R F I L"} />
+                
 
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -350,9 +354,10 @@ export default class Perfil extends Component<{}> {
                         initialNumToRender={10}
                     />
                         {(this.state.invitaciones.length == 0) && <View style={{ alignItems: 'center', marginTop: 20 }}>
-                            <Icon name="ios-sad-outline" size={50} color="#831da2" />
+                            <IconMaterial name="emoticon-sad" size={100} color="#95a5a6" />
                             <TouchableOpacity onPress={() => navigate('home')}
                                 style={{
+                                    marginVertical:20,
                                     flexDirection: 'row',
                                     alignItems: 'center',
                                     borderRadius: 10,
@@ -426,6 +431,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFF',
+        ...Platform.select({
+            ios:{
+                paddingVertical:50,
+            },
+            android:{
+                paddingVertical:30,
+            }
+        }),
     },
     avatar: {
         borderRadius: 10,

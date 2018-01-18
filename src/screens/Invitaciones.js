@@ -32,12 +32,18 @@ import store from '../store';
 import { URL_WS_SOCKET } from '../Constantes'
 import { Dialog } from 'react-native-simple-dialogs';
 import QRCode from 'react-native-qrcode';
+import Boton from '../components/Boton';
 const { height, width } = Dimensions.get('window')
 export default class Invitaciones extends Component<{}> {
   static navigationOptions = {
     title: 'Invitaciones',
     headerTintColor: 'purple',
     header: null,
+    tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
+      <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+          CODIGOS
+      </Text>
+  ):"CODIGOS",
     tabBarIcon: ({ tintColor, focused }) => (
       <Icon
         name={focused ? 'md-barcode' : 'md-barcode'}
@@ -151,113 +157,34 @@ export default class Invitaciones extends Component<{}> {
       modalCodigoQR: true
     })
   }
-  _handleBarCodeRead(e) {
-    Vibration.vibrate();
-    this.setState({
-      scanning: false,
-      buscandoInvitacion: true,
-      resultado: e.data
-    });
 
-    const parametros = {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id_qr: e.data,
-        id_usuario: this.state.id
-      })
-    }
-    fetch(URL_WS_SOCKET + "/ws/VerificacionCodigo", parametros)
-      .then(response => response.json())
-      .then(responseJson => {
-        if (responseJson.res == "ok") {
-          if (responseJson.invitacion.length > 0) {
-            this.setState({
-              buscandoInvitacion: false,
-              codigoqr_des_encontrado: responseJson.invitacion[0].codigoqr_des,
-              respuestaScanner: responseJson.invitacion[0].estado == "WAIT" ? true : false,
-              codigoEncontrado: true
-            })
-          } else {
-            this.setState({
-              buscandoInvitacion: false,
-              codigoEncontrado: false,
-            })
-          }
-        } else {
-          this.setState({ buscandoInvitacion: false })
-
-        }
-      })
-      .catch(err => {
-        this.setState({ buscandoInvitacion: false })
-      })
-
-    return;
-  }
   render() {
     const { navigate } = this.props.navigation;
-    const { scanning, es_empresa,
-      buscandoInvitacion, codigoEncontrado,
-      respuestaScanner, codigoqr_des_encontrado } = this.state
+
 
     return (
       <View style={styles.container} ref="invitaciones">
-        <Toolbar navigation={navigate} banner={"C O D I G O S"} />
-        {(es_empresa == "SI" && scanning) ?
-          <View>
-            <View style={styles.rectangleContainer}>
-              <Camera style={styles.camera} type={this.state.cameraType}
-                onBarCodeRead={this._handleBarCodeRead.bind(this)}>
-                <View style={styles.rectangleContainer}>
-                  <View style={styles.rectangle} />
-                </View>
-              </Camera>
-            </View>
-          </View> :
-          <View style={{ alignItems: 'center' }}>
-            {(buscandoInvitacion) ?
-              <View>
-                <Image source={require('../assets/img/loading.gif')}
-                  style={{ marginVertical: 10, height: 80, width: 80, alignSelf: 'center' }} />
-                <Text>Buscando ...</Text>
-              </View> :
-              codigoEncontrado ?
-                <View style={{ alignItems: 'center' }}>
-                  <Icon name="ios-checkmark-circle-outline" color={"#2ecc71"} size={100} />
-                  <Text>{codigoqr_des_encontrado}</Text>
-                  <TouchableOpacity onPress={() => this.setState({ scanning: true })}
-                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
-                    <Text>OK</Text>
-                  </TouchableOpacity>
-                </View>
-                : es_empresa == "SI" && <View style={{ alignItems: 'center' }}>
-                  <Icon name="ios-close-circle-outline" color={"#c0392b"} size={100} />
-                  <Text>No se encontro</Text>
-                  <TouchableOpacity onPress={() => this.setState({ scanning: true })}
-                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
-                    <Text>OK</Text>
-                  </TouchableOpacity>
-                </View>
-            }
-          </View>
+        
+        {this.state.es_empresa == "SI" &&
+          <Boton text={"Abrir Scanner"} />
         }
         {this.state.invitaciones.length == 0 ?
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="ios-sad-outline" size={50} color="#831da2" />
-            <TouchableOpacity onPress={() => navigate('home')}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderRadius: 10,
-                borderWidth: 1, borderColor: '#831da2', padding: 10
-              }}>
-
-              <Text style={{ color: '#831da2' }}>BUSCAR CODIGOS</Text>
-            </TouchableOpacity>
+          <View >
+            <Text style={{
+              color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
+                ios: { fontFamily: 'Arial', },
+                android: { fontFamily: 'Roboto' }
+              }), padding: 20
+            }}>Codigos</Text>
+            <Text style={{
+              color: '#333', ...Platform.select({
+                ios: { fontFamily: 'Arial', },
+                android: { fontFamily: 'Roboto' }
+              }), padding: 20
+            }}>
+            Busca tu codigo de canje para pases libres, ofertas, promociones, descuentos y mucho mas.
+            </Text>
+            <Boton styleText={{ color: '#9b59b6' }} onPress={() => navigate('home')} text={"Empezar a buscar codigos"} />
 
           </View>
           : <FlatList
@@ -316,7 +243,7 @@ export default class Invitaciones extends Component<{}> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
   },
   camera: {
     justifyContent: 'center',

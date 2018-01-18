@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFont from 'react-native-vector-icons/FontAwesome'
+import IconFondation from 'react-native-vector-icons/Foundation'
 const { width, height } = Dimensions.get('window')
 const DEFAULT_AVATAR = './imgs/fg-avatar.png'
 const AVATAR_SIZE = 28
@@ -144,6 +145,10 @@ export default class PostBox extends Component {
                     {this.props.post.codigoqr &&
                         <TouchableOpacity onPress={this.props.ObtenerCodigoQR}>
                             <Icon name="md-barcode" size={30} color="#95a5a6" style={{ marginRight: 15 }} />
+                        </TouchableOpacity>}
+                    {this.props.post.latitude &&
+                        <TouchableOpacity onPress={this.props.VerUbicacion}>
+                            <IconFondation name="marker" size={30} color="#95a5a6" style={{ marginRight: 15 }} />
                         </TouchableOpacity>}
 
                 </View>

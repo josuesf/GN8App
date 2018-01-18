@@ -249,7 +249,7 @@ export default class VistaPerfil extends Component<{}> {
         const component2 = () => <Icon name="md-list" size={30} color="#95a5a6" />
         const component3 = () => <Icon name="md-bookmark" size={30} color="#95a5a6" />
         const buttons = this.state.es_empresa == "SI" ?
-            [{ element: component1 }, { element: component2 }, { element: component3 }]
+            [{ element: component1 }, { element: component2 }]
             : [{ element: component1 }, { element: component3 }]
         const { selectedIndex } = this.state
         return (

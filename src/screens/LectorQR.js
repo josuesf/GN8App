@@ -37,8 +37,49 @@ export default class LectorQR extends Component<{}> {
     };
     _handleBarCodeRead(e) {
         Vibration.vibrate();
-        this.setState({ scanning: false, resultado: e.data });
-        //Linking.openURL(e.data).catch(err => console.error('An error occured', err));
+        this.setState({
+            scanning: false,
+            buscandoInvitacion: true,
+            resultado: e.data
+        });
+
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id_qr: e.data,
+                id_usuario: this.state.id
+            })
+        }
+        fetch(URL_WS_SOCKET + "/ws/VerificacionCodigo", parametros)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.res == "ok") {
+                    if (responseJson.invitacion.length > 0) {
+                        this.setState({
+                            buscandoInvitacion: false,
+                            codigoqr_des_encontrado: responseJson.invitacion[0].codigoqr_des,
+                            respuestaScanner: responseJson.invitacion[0].estado == "WAIT" ? true : false,
+                            codigoEncontrado: true
+                        })
+                    } else {
+                        this.setState({
+                            buscandoInvitacion: false,
+                            codigoEncontrado: false,
+                        })
+                    }
+                } else {
+                    this.setState({ buscandoInvitacion: false })
+
+                }
+            })
+            .catch(err => {
+                this.setState({ buscandoInvitacion: false })
+            })
+
         return;
     }
     state = {
@@ -53,13 +94,17 @@ export default class LectorQR extends Component<{}> {
     }
     render() {
         const { navigate } = this.props.navigation;
+        const { scanning, es_empresa,
+            buscandoInvitacion, codigoEncontrado,
+            respuestaScanner, codigoqr_des_encontrado } = this.state
+            
         if (this.state.scanning) {
             return (
                 <View style={styles.container}>
                     <Toolbar navigation={navigate} banner={"Scanner Code"} />
                     <View style={styles.rectangleContainer}>
-                        <Camera style={styles.camera} 
-                            type={this.state.cameraType} 
+                        <Camera style={styles.camera}
+                            type={this.state.cameraType}
                             onBarCodeRead={this._handleBarCodeRead.bind(this)}>
                             <View style={styles.rectangleContainer}>
                                 <View style={styles.rectangle} />
@@ -73,15 +118,34 @@ export default class LectorQR extends Component<{}> {
             );
         }
         else {
-            return (<View style={styles.container}>
-                <Text style={styles.welcome}>
-                    Resultado
-        </Text>
-                <Text style={styles.instructions}>
-                    {this.state.resultado}
-                </Text>
-                <TouchableOpacity onclick={() => this.setState({ scanning: true })}><Text>Intentar nuevamente</Text></TouchableOpacity>
-            </View>);
+            return (
+                <View style={{ alignItems: 'center' }}>
+                    {(buscandoInvitacion) ?
+                        <View>
+                            <Image source={require('../assets/img/loading.gif')}
+                                style={{ marginVertical: 10, height: 80, width: 80, alignSelf: 'center' }} />
+                            <Text>Buscando ...</Text>
+                        </View> :
+                        codigoEncontrado ?
+                            <View style={{ alignItems: 'center' }}>
+                                <Icon name="ios-checkmark-circle-outline" color={"#2ecc71"} size={100} />
+                                <Text>{codigoqr_des_encontrado}</Text>
+                                <TouchableOpacity onPress={() => this.setState({ scanning: true })}
+                                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
+                                    <Text>OK</Text>
+                                </TouchableOpacity>
+                            </View>
+                            : es_empresa == "SI" && <View style={{ alignItems: 'center' }}>
+                                <Icon name="ios-close-circle-outline" color={"#c0392b"} size={100} />
+                                <Text>No se encontro</Text>
+                                <TouchableOpacity onPress={() => this.setState({ scanning: true })}
+                                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
+                                    <Text>OK</Text>
+                                </TouchableOpacity>
+                            </View>
+                    }
+                </View>
+            );
         }
     }
 }

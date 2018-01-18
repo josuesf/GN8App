@@ -20,6 +20,7 @@ import Comentarios from './screens/Comentarios'
 import DieronLike from './screens/DieronLike';
 import NuevoPost from './screens/NuevoPost';
 import VistaPerfil from './screens/VistaPerfil';
+import Mapa from './screens/Mapa'
 const Main = TabNavigator({
   home: {
     screen: Home,
@@ -44,14 +45,13 @@ const Main = TabNavigator({
     tabBarOptions: {
       activeTintColor: '#9b59b6',
       labelStyle: {
-        fontSize: 9,
+        fontSize: 10,
       },
       style: {
         backgroundColor: '#fcfcfc',
-        elevation: 5,
       },
       showIcon: true,
-      showLabel: false,
+      showLabel: true,
       indicatorStyle: { backgroundColor: 'transparent' }
     },
 
@@ -100,6 +100,9 @@ const App = StackNavigator(
     },
     vistaPerfil:{
       screen:VistaPerfil
+    },
+    mapa:{
+      screen:Mapa
     }
   },
   {

@@ -20,6 +20,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.appevents.AppEventsLogger;
+import com.airbnb.android.react.maps.MapsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -37,7 +38,8 @@ public class MainApplication extends Application implements ReactApplication {
             new ImagePickerPackage(),
             new FBSDKPackage(mCallbackManager),
             new VectorIconsPackage(),
-            new RCTCameraPackage()
+            new RCTCameraPackage(),
+            new MapsPackage()
       );
     }
 

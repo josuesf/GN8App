@@ -14,7 +14,7 @@ const {width}=Dimensions.get('window')
 
 const toolbar = ({ navigation, banner }) => (
     <View style={[styles.container]} >
-        {banner=="GN8" && <Text style={{fontWeight:'900',fontSize:24,color:'#831da2'}}>G N 8</Text>}
+        {banner=="GN8" && <Image style={{height:30,width:70,resizeMode:'contain'}} source={require('../assets/img/summer1.png')}/>}
         
         {banner!="GN8" && <Text style={{fontWeight:'900',fontSize:24,color:'#831da2'}}>{banner}</Text>}
     </View>

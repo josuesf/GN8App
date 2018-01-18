@@ -54,6 +54,11 @@ export default class Buscar extends Component<{}> {
         title: 'Buscar',
         headerTintColor: 'purple',
         header: null,
+        tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
+            <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+                EXPLORAR
+            </Text>
+        ):"EXPLORAR",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
                 name={focused ? 'magnifying-glass' : 'magnifying-glass'}
@@ -161,7 +166,6 @@ export default class Buscar extends Component<{}> {
 
         return (
             <View style={styles.container}>
-                <Toolbar navigation={navigate} banner={"B U S C A R"} />
                 <SearchBar
 
                     animateTransitions={true}
@@ -210,7 +214,16 @@ export default class Buscar extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#eee',
+        backgroundColor: '#fff',
+        ...Platform.select({
+            ios:{
+                paddingTop:20,
+            },
+            android:{
+                marginTop:0,
+            }
+        }),
+        
     },
 
 });
