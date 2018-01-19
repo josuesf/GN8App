@@ -33,6 +33,8 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import { ButtonGroup } from 'react-native-elements'
 import PostBox from '../components/PostBox'
 import QRCode from 'react-native-qrcode';
+import PerfilGuardados from '../SubScreens/PerfilGuardados'
+import PerfilInvitaciones from '../SubScreens/PerfilInvitaciones'
 
 const { width, height } = Dimensions.get('window')
 export default class Perfil extends Component<{}> {
@@ -40,11 +42,11 @@ export default class Perfil extends Component<{}> {
         title: 'Perfil',
         headerTintColor: 'purple',
         header: null,
-        tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
-            <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+        tabBarLabel: Platform.OS == 'android' ? ({ tintColor, focused }) => (
+            <Text style={{ fontSize: 10, color: focused ? tintColor : '#95a5a6' }}>
                 PERFIL
             </Text>
-        ):"PERFIL",
+        ) : "PERFIL",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
                 name={focused ? 'torso' : 'torso'}
@@ -72,10 +74,7 @@ export default class Perfil extends Component<{}> {
             SeguirCargando: false,
             page: 1,
             posts: [],
-            SeguirCargando_qrs: false,
-            page_qr: 1,
-            invitaciones: [],
-            refreshing_qrs: false
+
         }
     }
 
@@ -184,10 +183,7 @@ export default class Perfil extends Component<{}> {
     }
     updateIndex = (selectedIndex) => {
         this.setState({ selectedIndex })
-        if (selectedIndex == 0) this.CargarInvitaciones()
     }
-
-
     ObtenerCodigoQR = () => {
 
     }
@@ -246,8 +242,8 @@ export default class Perfil extends Component<{}> {
             <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 10, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
-        const component1 = () => <IconMaterial name="qrcode-scan" size={28} color="#95a5a6" />
-        const component2 = () => <Icon name="md-list" size={30} color="#95a5a6" />
+        const component1 = () => <Icon name="md-list" size={30} color="#95a5a6" />
+        const component2 = () => <IconMaterial name="qrcode-scan" size={28} color="#95a5a6" />
         const component3 = () => <Icon name="md-bookmark" size={30} color="#95a5a6" />
         const buttons = this.state.es_empresa == "SI" ?
             [{ element: component1 }, { element: component2 }, { element: component3 }]
@@ -255,7 +251,7 @@ export default class Perfil extends Component<{}> {
         const { selectedIndex } = this.state
         return (
             <View style={styles.container} ref="perfil">
-                
+
 
                 <View style={{
                     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
@@ -283,7 +279,7 @@ export default class Perfil extends Component<{}> {
                         <Text style={{ color: '#BDBDBD' }}>{store.getState().usuario}</Text>
                         <TouchableOpacity
                             onPress={() => {
-                                if(this.state.es_empresa=='SI')
+                                if (this.state.es_empresa == 'SI')
                                     navigate('editPerfilEmpresa')
                                 else
                                     navigate('editPerfil')
@@ -306,7 +302,7 @@ export default class Perfil extends Component<{}> {
                         buttons={buttons}
                         containerStyle={{ height: 40 }} />
                 </View>
-                {this.state.selectedIndex == 1 && this.state.es_empresa == "SI" && <FlatList
+                {this.state.selectedIndex == 0 && this.state.es_empresa == "SI" && <FlatList
                     data={this.state.posts}
                     renderItem={({ item }) => (
                         <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
@@ -325,105 +321,10 @@ export default class Perfil extends Component<{}> {
                     onEndReachedThreshold={10}
                     initialNumToRender={10}
                 />}
-                {this.state.selectedIndex == 0 &&
-                    <View><FlatList
-                        numColumns={3}
-                        data={this.state.invitaciones}
-                        renderItem={({ item }) => (
-                            /*<InvitacionBox invitacion={item} navigate={navigate} 
-                            VerCodigoQR={() => this.VerCodigoQR(item)} />*/
-                            <View style={{ padding: 10 }}>
-                                <QRCode
-                                    value={item._id}
-                                    size={width / 3 - 20}
-                                    bgColor='#d1c4e9'
-                                    fgColor='white' />
-                            </View>
-                        )}
-                        refreshing={this.state.refreshing_qrs}
-                        onRefresh={this._onRefresh_qrs}
-                        keyExtractor={(item, index) => index}
-                        ListFooterComponent={() =>
-                            !this.state.loadingMore_qrs ?
-                                (this.state.SeguirCargando_qrs ? null :
-                                    null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                                : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
-                        }
-                        onEndReached={this.handleLoadMore_qrs}
-                        onEndReachedThreshold={10}
-                        initialNumToRender={10}
-                    />
-                        {(this.state.invitaciones.length == 0) && <View style={{ alignItems: 'center', marginTop: 20 }}>
-                            <IconMaterial name="emoticon-sad" size={100} color="#95a5a6" />
-                            <TouchableOpacity onPress={() => navigate('home')}
-                                style={{
-                                    marginVertical:20,
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    borderRadius: 10,
-                                    borderWidth: 1, borderColor: '#831da2', padding: 10
-                                }}>
-
-                                <Text style={{ color: '#831da2' }}>OBTENER CODIGOS</Text>
-                            </TouchableOpacity>
-
-                        </View>}
-                    </View>
-                }
-
+                {this.state.selectedIndex == 1 && <PerfilInvitaciones navigation={this.props.navigation} />}
+                {this.state.selectedIndex == 2 && <PerfilGuardados navigation={this.props.navigation} />}
             </View>
         );
-    }
-
-    CargarInvitaciones = () => {
-        this.setState({ loadingMore_qrs: true })
-        const parametros = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                page: this.state.page_qr,
-                id_usuario_invitado: this.state.id
-            })
-        }
-        fetch(URL_WS_SOCKET + "/ws/invitaciones_user_check", parametros)
-            .then(response => response.json())
-            .then(responseJson => {
-                if (responseJson.res == "ok") {
-                    this.setState({
-                        invitaciones: this.state.page_qr == 1 ?
-                            responseJson.invitaciones
-                            : [...this.state.invitaciones, ...responseJson.invitaciones],
-                        loadingMore_qrs: false,
-                        SeguirCargando_qrs: responseJson.invitaciones.length != 0 ? true : false
-                    })
-
-                } else {
-                    this.setState({ loadingMore_qrs: false })
-                }
-            })
-            .catch(err => {
-                this.setState({ loadingMore_qrs: false })
-                //Agregar un indicador de falta de conexio
-            })
-    }
-    handleLoadMore_qrs = () => {
-        if (this.state.SeguirCargando_qrs)
-            this.setState(
-                {
-                    page_qr: this.state.page_qr + 1
-                    , SeguirCargando_qrs: false
-                },
-                () => {
-                    this.CargarInvitaciones();
-                }
-            );
-
-    };
-    _onRefresh_qrs = () => {
-        this.setState({ page_qr: 1 }, () => { this.CargarInvitaciones() })
     }
 }
 
@@ -432,11 +333,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFF',
         ...Platform.select({
-            ios:{
-                paddingVertical:50,
+            ios: {
+                paddingTop: 50,
             },
-            android:{
-                paddingVertical:30,
+            android: {
+                paddingTop: 30,
             }
         }),
     },

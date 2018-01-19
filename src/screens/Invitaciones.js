@@ -39,11 +39,11 @@ export default class Invitaciones extends Component<{}> {
     title: 'Invitaciones',
     headerTintColor: 'purple',
     header: null,
-    tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
-      <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
-          CODIGOS
+    tabBarLabel: Platform.OS == 'android' ? ({ tintColor, focused }) => (
+      <Text style={{ fontSize: 10, color: focused ? tintColor : '#95a5a6' }}>
+        CODIGOS
       </Text>
-  ):"CODIGOS",
+    ) : "CODIGOS",
     tabBarIcon: ({ tintColor, focused }) => (
       <Icon
         name={focused ? 'md-barcode' : 'md-barcode'}
@@ -164,11 +164,42 @@ export default class Invitaciones extends Component<{}> {
 
     return (
       <View style={styles.container} ref="invitaciones">
-        
+
         {this.state.es_empresa == "SI" &&
-          <Boton text={"Abrir Scanner"} />
+          <Boton text={"ABRIR ESCANER"} 
+          styleBoton={{backgroundColor:'#9b59b6',borderRadius:10,alignItems:'center',
+          ...Platform.select({
+            ios:{
+              marginVertical:50
+            },
+            android:{
+              marginVertical:20
+            }
+          })
+         ,marginHorizontal:10,padding:10}}
+          styleText={{fontWeight:'bold',color:'#fff'}} 
+          onPress={()=>navigate('lectorQR')}/>
         }
-        {this.state.invitaciones.length == 0 ?
+        <FlatList
+          numColumns={2}
+          data={this.state.invitaciones}
+          renderItem={({ item }) => (
+            <InvitacionBox invitacion={item} navigate={navigate} VerCodigoQR={() => this.VerCodigoQR(item)} />
+          )}
+          refreshing={this.state.refreshing}
+          onRefresh={this._onRefresh}
+          keyExtractor={(item, index) => index}
+          ListFooterComponent={() =>
+            !this.state.loadingMore ?
+              (this.state.SeguirCargando ? null :
+                null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
+              : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
+          }
+          onEndReached={this.handleLoadMore}
+          onEndReachedThreshold={0.1}
+          initialNumToRender={10}
+        />
+        {this.state.invitaciones.length == 0 &&
           <View >
             <Text style={{
               color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
@@ -182,30 +213,11 @@ export default class Invitaciones extends Component<{}> {
                 android: { fontFamily: 'Roboto' }
               }), padding: 20
             }}>
-            Busca tu codigo de canje para pases libres, ofertas, promociones, descuentos y mucho mas.
+              Busca tu codigo de canje para pases libres, ofertas, promociones, descuentos y mucho mas.
             </Text>
             <Boton styleText={{ color: '#9b59b6' }} onPress={() => navigate('home')} text={"Empezar a buscar codigos"} />
 
           </View>
-          : <FlatList
-            numColumns={2}
-            data={this.state.invitaciones}
-            renderItem={({ item }) => (
-              <InvitacionBox invitacion={item} navigate={navigate} VerCodigoQR={() => this.VerCodigoQR(item)} />
-            )}
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-            keyExtractor={(item, index) => index}
-            ListFooterComponent={() =>
-              !this.state.loadingMore ?
-                (this.state.SeguirCargando ? null :
-                  null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
-            }
-            onEndReached={this.handleLoadMore}
-            onEndReachedThreshold={0.1}
-            initialNumToRender={10}
-          />
         }
 
 

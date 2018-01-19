@@ -16,16 +16,19 @@ import {
     Dimensions,
     Vibration,
     Button,
+    Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import Camera from 'react-native-camera';
 import Toolbar from '../components/toolbar'
+import { URL_WS_SOCKET } from '../Constantes'
+import store from '../store';
+import Boton from '../components/Boton';
 export default class LectorQR extends Component<{}> {
     static navigationOptions = {
-        title: 'Lector QR',
+        title: 'Escaner',
         headerTintColor: 'purple',
-        header: null,
         tabBarIcon: ({ tintColor, focused }) => (
             <IconMaterial
                 name={focused ? 'qrcode-scan' : 'qrcode-scan'}
@@ -51,28 +54,22 @@ export default class LectorQR extends Component<{}> {
             },
             body: JSON.stringify({
                 id_qr: e.data,
-                id_usuario: this.state.id
+                id_usuario: store.getState().id
             })
         }
         fetch(URL_WS_SOCKET + "/ws/VerificacionCodigo", parametros)
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson.res == "ok") {
-                    if (responseJson.invitacion.length > 0) {
-                        this.setState({
-                            buscandoInvitacion: false,
-                            codigoqr_des_encontrado: responseJson.invitacion[0].codigoqr_des,
-                            respuestaScanner: responseJson.invitacion[0].estado == "WAIT" ? true : false,
-                            codigoEncontrado: true
-                        })
-                    } else {
-                        this.setState({
-                            buscandoInvitacion: false,
-                            codigoEncontrado: false,
-                        })
-                    }
+                    console.log(responseJson)
+                    this.setState({
+                        buscandoInvitacion: false,
+                        codigoqr_des_encontrado: responseJson.invitacion.codigoqr_des,
+                        respuestaScanner: responseJson.invitacion.estado == "CHECK" ? true : false,
+                        codigoEncontrado: true
+                    })
                 } else {
-                    this.setState({ buscandoInvitacion: false })
+                    this.setState({ buscandoInvitacion: false, codigoEncontrado: false })
 
                 }
             })
@@ -85,6 +82,7 @@ export default class LectorQR extends Component<{}> {
     state = {
         scanning: true,
         resultado: '',
+        buscandoInvitacion: true,
     }
     getInitialState() {
         return {
@@ -97,11 +95,10 @@ export default class LectorQR extends Component<{}> {
         const { scanning, es_empresa,
             buscandoInvitacion, codigoEncontrado,
             respuestaScanner, codigoqr_des_encontrado } = this.state
-            
+
         if (this.state.scanning) {
             return (
                 <View style={styles.container}>
-                    <Toolbar navigation={navigate} banner={"Scanner Code"} />
                     <View style={styles.rectangleContainer}>
                         <Camera style={styles.camera}
                             type={this.state.cameraType}
@@ -119,29 +116,36 @@ export default class LectorQR extends Component<{}> {
         }
         else {
             return (
-                <View style={{ alignItems: 'center' }}>
-                    {(buscandoInvitacion) ?
-                        <View>
+                <View style={styles.container}>
+                    {(this.state.buscandoInvitacion) ?
+                        <View style={{ alignItems: 'center' }}>
                             <Image source={require('../assets/img/loading.gif')}
                                 style={{ marginVertical: 10, height: 80, width: 80, alignSelf: 'center' }} />
                             <Text>Buscando ...</Text>
                         </View> :
-                        codigoEncontrado ?
+                        this.state.codigoEncontrado ?
                             <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: 30, fontWeight: 'bold', marginVertical: 20 }}>
+                                    {codigoqr_des_encontrado}
+                                </Text>
                                 <Icon name="ios-checkmark-circle-outline" color={"#2ecc71"} size={100} />
-                                <Text>{codigoqr_des_encontrado}</Text>
-                                <TouchableOpacity onPress={() => this.setState({ scanning: true })}
-                                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
-                                    <Text>OK</Text>
-                                </TouchableOpacity>
+                                <Boton text="CONFIRMAR CODIGO" 
+                                    onPress={() => this.setState({ scanning: true })}
+                                    styleBoton={{ backgroundColor: '#2ecc71', borderRadius: 10, marginVertical: 20 }}
+                                    styleText={{ color: '#fff', fontWeight: 'bold' }}
+                                />
+
                             </View>
-                            : es_empresa == "SI" && <View style={{ alignItems: 'center' }}>
+                            : <View style={{ alignItems: 'center' }}>
+                                <Text style={{ fontSize: 30, fontWeight: 'bold', marginVertical: 20 }}>
+                                    No se encontro
+                                </Text>
                                 <Icon name="ios-close-circle-outline" color={"#c0392b"} size={100} />
-                                <Text>No se encontro</Text>
-                                <TouchableOpacity onPress={() => this.setState({ scanning: true })}
-                                    style={{ marginVertical: 10, borderColor: '#831da2', padding: 10, borderWidth: 1, borderRadius: 10 }}>
-                                    <Text>OK</Text>
-                                </TouchableOpacity>
+
+                                <Boton text="Reintentar" onPress={() => this.setState({ scanning: true })}
+                                    styleBoton={{ backgroundColor: '#c0392b', borderRadius: 10, marginVertical: 20 }}
+                                    styleText={{ color: '#fff', fontWeight: 'bold' }}
+                                />
                             </View>
                     }
                 </View>
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
         height: 250,
         width: 250,
         borderWidth: 2,
-        borderColor: '#00FF00',
+        borderColor: '#9b59b6',
         backgroundColor: 'transparent',
     },
 });

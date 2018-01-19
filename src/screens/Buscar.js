@@ -167,9 +167,6 @@ export default class Buscar extends Component<{}> {
         return (
             <View style={styles.container}>
                 <SearchBar
-
-                    animateTransitions={true}
-                    animationType="spring"
                     containerStyle={{
                         ...Platform.select({
                             ios: {

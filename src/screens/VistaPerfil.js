@@ -81,7 +81,7 @@ export default class VistaPerfil extends Component<{}> {
 
     updateIndex = (selectedIndex) => {
         this.setState({ selectedIndex })
-        //if (selectedIndex == 0) this.CargarInvitaciones()
+        if (selectedIndex == 0) this.CargarInvitaciones()
     }
 
     CargarPosts = () => {
@@ -139,7 +139,8 @@ export default class VistaPerfil extends Component<{}> {
                         usuario: responseJson.user.username,
                         photoUrl: responseJson.user.photo_url,
                         likes: responseJson.user.likes,
-                        es_empresa:responseJson.user.es_empresa
+                        es_empresa: responseJson.user.es_empresa,
+                        selectedIndex:responseJson.user.es_empresa=="SI"?1:0
                     })
                 }
             })
@@ -250,7 +251,7 @@ export default class VistaPerfil extends Component<{}> {
         const component3 = () => <Icon name="md-bookmark" size={30} color="#95a5a6" />
         const buttons = this.state.es_empresa == "SI" ?
             [{ element: component1 }, { element: component2 }]
-            : [{ element: component1 }, { element: component3 }]
+            : [{ element: component1 }]
         const { selectedIndex } = this.state
         return (
             <View style={styles.container} ref="perfil">
@@ -341,20 +342,25 @@ export default class VistaPerfil extends Component<{}> {
                         onEndReachedThreshold={10}
                         initialNumToRender={10}
                     />
-                        {(this.state.invitaciones.length == 0) && <View style={{ alignItems: 'center', marginTop: 20 }}>
-                            <Icon name="ios-sad-outline" size={50} color="#831da2" />
-                            <TouchableOpacity onPress={() => navigate('home')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    borderRadius: 10,
-                                    borderWidth: 1, borderColor: '#831da2', padding: 10
+                        {(this.state.invitaciones.length == 0) &&
+                            <View >
+                                <Text style={{
+                                    color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
+                                        ios: { fontFamily: 'Arial', },
+                                        android: { fontFamily: 'Roboto' }
+                                    }), padding: 20
+                                }}>Codigos canjeados</Text>
+                                <Text style={{
+                                    color: '#333', ...Platform.select({
+                                        ios: { fontFamily: 'Arial', },
+                                        android: { fontFamily: 'Roboto' }
+                                    }), padding: 20
                                 }}>
-
-                                <Text style={{ color: '#831da2' }}>OBTENER CODIGOS</Text>
-                            </TouchableOpacity>
-
-                        </View>}
+                                    Aqui encontraras todos los codigos que se canjeo, mientras mas tenga acumulara mas puntos.
+                                    </Text>
+                                
+                            </View>
+                        }
                     </View>
                 }
                 <Dialog
@@ -409,7 +415,7 @@ export default class VistaPerfil extends Component<{}> {
             },
             body: JSON.stringify({
                 page: this.state.page_qr,
-                id_usuario_invitado: this.state.id
+                id_usuario_invitado: this.state.id_usuario
             })
         }
         fetch(URL_WS_SOCKET + "/ws/invitaciones_user_check", parametros)

@@ -11,7 +11,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconFont from 'react-native-vector-icons/FontAwesome'
 import IconFondation from 'react-native-vector-icons/Foundation'
 const { width, height } = Dimensions.get('window')
 const DEFAULT_AVATAR = './imgs/fg-avatar.png'
@@ -85,11 +84,13 @@ export default class PostBox extends Component {
         if (likesAlmacen) {
             leGusta = likesAlmacen
         }
+        const estaGuardado = (this.props.post.saved && this.props.post.saved[store.getState().id]) || false
         this.setState({
             personasGenial: this.props.post.likesCount,
             comentarios: this.props.post.commentsCount,
             esGenial: leGusta,
-            fecha_publicada: moment(new Date(this.props.post.createdAt)).fromNow()
+            fecha_publicada: moment(new Date(this.props.post.createdAt)).fromNow(),
+            estaGuardado:estaGuardado
         })
         this.getHeight(this.props.post.photo_post)
     }
@@ -108,12 +109,40 @@ export default class PostBox extends Component {
         if (store.getState().id != this.props.post.id_usuario)
             this.props.navigate('vistaPerfil', { id_usuario: this.props.post.id_usuario })
     }
+    guardarPost=()=>{
+        const parametros = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id_post: this.props.post._id,
+                id_usuario: store.getState().id,
+                save:!this.state.estaGuardado
+            })
+        }
+        console.log(parametros)
+        fetch(URL_WS_SOCKET + "/ws/guardar_post", parametros)
+            .then(response => response.json())
+            .then(responseJson => {
+                if (responseJson.res == "ok") {
+                    this.setState({estaGuardado:!this.state.estaGuardado})
+                } else {
+                    //Mostrar Error
+                }
+            })
+            .catch(err => {
+                //Mostrar Error
+                console.log(err)
+            })
+    }
     render() {
-        const { esGenial, personasGenial, comentarios, fecha_publicada } = this.state
+        const { esGenial, personasGenial,
+            comentarios, fecha_publicada,estaGuardado } = this.state
         const likes = esGenial ?
             "A ti " + ((personasGenial - 1) > 0 ? ("y " + (personasGenial - 1) + ((personasGenial - 1) > 1 ? " personas mas les" : " persona mas le")) : "te") + " parece genial" :
             "A " + personasGenial + (personasGenial > 1 ? " personas les" : " persona le") + " parece genial"
-
         return (
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
@@ -123,8 +152,10 @@ export default class PostBox extends Component {
                             style={{ width: AVATAR_SIZE, height: AVATAR_SIZE, borderRadius: 12 }} />
                         <Text style={{ marginLeft: 5, color: '#424242', fontWeight: 'bold' }}>{this.props.post.nombre_usuario}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ marginRight: 10 }} onPress={() => console.log('oye')}>
-                        <Icon name={"ios-bookmark-outline"} size={30} color={"#831DA2"} />
+                    <TouchableOpacity style={{ marginRight: 10 }} 
+                        onPress={this.guardarPost}>
+                        <IconFA name={!estaGuardado?"bookmark-o":"bookmark"} 
+                        size={30} color={!estaGuardado?"#95a5a6":"#9b59b6"} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ alignItems: 'center', borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#e0e0e0' }}>

@@ -54,6 +54,7 @@ const Main = TabNavigator({
       showLabel: true,
       indicatorStyle: { backgroundColor: 'transparent' }
     },
+    lazy:true,
 
   });
 

@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Dimensions,
     AsyncStorage,
+    Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
@@ -24,12 +25,15 @@ export default class EmpresaBox extends Component {
             <View ref="root" style={styles.container}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 0, marginTop: 5, padding: 5 }}>
                     <Image defaultSource={require('../assets/img/user_anonimo.jpg')}
-                        source={{ uri:  this.props.empresa.photo_url||'https://s3-sa-east-1.amazonaws.com/gn8bucket/user_anonimo.jpg' }}
-                        style={{ backgroundColor: '#f1eff0',borderRadius: 10, width: AVATAR_SIZE, height: AVATAR_SIZE, resizeMode: Image.resizeMode.contain }} />
+                        source={{ uri: this.props.empresa.photo_url || 'https://s3-sa-east-1.amazonaws.com/gn8bucket/user_anonimo.jpg' }}
+                        style={{
+                            borderRadius: AVATAR_SIZE / 2,
+                            width: AVATAR_SIZE, height: AVATAR_SIZE
+                        }} />
 
                     <View style={{ flexDirection: 'column', marginHorizontal: 10, }}>
                         <Text style={{ color: '#424242', fontWeight: 'bold' }}>{this.props.empresa.name}</Text>
-                        <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name={"ios-star"}
                                 size={30} color={"#FFC300"} style={{ marginRight: 15 }} />
                             <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#9e9e9e' }}>{this.props.empresa.likes}</Text>
@@ -49,11 +53,13 @@ export default class EmpresaBox extends Component {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        shadowColor: 'black',
-        shadowOpacity: .2,
-        elevation: 2,
-        margin: 3,
-        borderRadius: 10,
+        // shadowColor: 'black',
+        // shadowOpacity: .2,
+        // elevation: 2,
+        // marginVertical: 2,
+        //borderRadius: 10,
+        borderBottomWidth: 0.5,
+        borderColor: '#eee'
     },
     image: {
         width: 50,
