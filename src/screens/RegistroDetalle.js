@@ -87,14 +87,14 @@ export default class RegistroDetalle extends Component<{}> {
             })
         }
         console.log(parametros)
-        fetch(URL_WS + '/ws/signup', parametros)
+        fetch(URL_WS_SOCKET + '/ws/signup', parametros)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson)
                 if (responseJson.res == "ok") {
                     const user = responseJson.user
                     const user_data = {
-                        id: user.id,
+                        id: user._id,
                         username: user.username,
                         name: user.name,
                         email: user.email,

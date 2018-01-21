@@ -39,11 +39,11 @@ export default class Home extends Component<{}> {
         title: 'Home',
         headerTintColor: 'purple',
         header: null,
-        tabBarLabel: Platform.OS=='android'?({ tintColor, focused }) => (
-            <Text style={{fontSize:10,color:focused ? tintColor : '#95a5a6'}}>
+        tabBarLabel: Platform.OS == 'android' ? ({ tintColor, focused }) => (
+            <Text style={{ fontSize: 10, color: focused ? tintColor : '#95a5a6' }}>
                 HOME
             </Text>
-        ):"HOME",
+        ) : "HOME",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
                 name={focused ? 'home' : 'home'}
@@ -65,7 +65,17 @@ export default class Home extends Component<{}> {
             loading: false,
             SeguirCargando: false,
             modalCodigoQR: false,
-            categoriaSel:0,
+            categoriaSel: 0,
+            categoriaSeleccionada: "",
+            categorias: [
+                { id: '', nombre: 'Todo', seleccionado: true },
+                { id: 'COMIDA', nombre: 'Comida', seleccionado: false },
+                { id: 'BEBIDAS', nombre: 'Bebida', seleccionado: false },
+                { id: 'DISCOTECA', nombre: 'Discoteca', seleccionado: false },
+                { id: 'BAR', nombre: 'Bar', seleccionado: false },
+                { id: 'ROPA', nombre: 'Ropa', seleccionado: false },
+                { id: 'VIAJES', nombre: 'Viajes', seleccionado: false }
+            ],
         }
 
     }
@@ -82,7 +92,7 @@ export default class Home extends Component<{}> {
                     usuario: res.username,
                     password: res.password,
                     photoUrl: res.photo_url,
-                    es_empresa:res.es_empresa,
+                    es_empresa: res.es_empresa,
                 })
             }
         })
@@ -102,9 +112,11 @@ export default class Home extends Component<{}> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                page: this.state.page
+                page: this.state.page,
+                categoria: this.state.categoriaSeleccionada,
             })
         }
+        console.log(parametros)
         fetch(URL_WS_SOCKET + "/ws/posts", parametros)
             .then(response => response.json())
             .then(responseJson => {
@@ -252,11 +264,22 @@ export default class Home extends Component<{}> {
         })
         this.props.navigation.navigate('invitaciones')
     }
-    SeleccionarCategoria=(index)=>{
-        this.setState({categoriaSel:index})
+    SeleccionarCategoria = (id) => {
+        var categorias = this.state.categorias
+        var catSel = ""
+        categorias.map(c => {
+            if (c.id == id) {
+                c.seleccionado = true
+                catSel = c.id
+            }
+            else
+                c.seleccionado = false
+        })
+        this.setState({ categorias: categorias, categoriaSeleccionada: catSel,page:1,posts:[] },
+        ()=>this.CargarPosts())
     }
-    VerUbicacion=(lat,long)=>{
-        this.props.navigation.navigate('mapa',{latitude:lat,longitude:long})
+    VerUbicacion = (lat, long) => {
+        this.props.navigation.navigate('mapa', { latitude: lat, longitude: long })
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -267,7 +290,7 @@ export default class Home extends Component<{}> {
                     barStyle="dark-content"
                 />
                 <Toolbar navigation={navigate} banner={"GN8"} />
-                {store.getState().es_empresa=="SI" && <TouchableOpacity onPress={this.AbrirNuevoPost}
+                {store.getState().es_empresa == "SI" && <TouchableOpacity onPress={this.AbrirNuevoPost}
                     activeOpacity={0.7} style={{ backgroundColor: '#FFF', height: 50, }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 5, padding: 5 }}>
                         {/*<Image source={{ uri: store.getState().photoUrl }}
@@ -292,59 +315,27 @@ export default class Home extends Component<{}> {
                     </View>
                 </TouchableOpacity>}
                 <View>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(0)} style={{
-                        backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Todo</Text>
-                        {this.state.categoriaSel==0 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(1)} style={{
-                        backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Comida</Text>
-                        {this.state.categoriaSel==1 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(2)} style={{
-                        backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Bebidas</Text>
-                        {this.state.categoriaSel==2 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(3)} style={{
-                        backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Discotecas</Text>
-                        {this.state.categoriaSel==3 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(4)} style={{
-                        backgroundColor: '#95a5a6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Bares</Text>
-                        {this.state.categoriaSel==4 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.SeleccionarCategoria(5)}style={{
-                        backgroundColor: '#9b59b6',alignItems:'center',
-                        marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10,paddingVertical:5, borderRadius: 10, justifyContent: 'center'
-                    }}>
-                        <Text style={{ color: '#FFF', fontWeight: '900' }}>Ropas</Text>
-                        {this.state.categoriaSel==5 && <IconMaterial name="circle" size={10} color="#FFF"/>}
-                    </TouchableOpacity>
-                </ScrollView>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
+                        {this.state.categorias.map((c, index) =>
+                            <TouchableOpacity key={index}
+                                onPress={() => this.SeleccionarCategoria(c.id)} style={{
+                                    backgroundColor: index % 2 == 0 ? '#9b59b6' : '#95a5a6', alignItems: 'center',
+                                    marginVertical: 10, marginHorizontal: 5, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10, justifyContent: 'center'
+                                }}>
+                                <Text style={{ color: '#FFF', fontWeight: '900' }}>{c.nombre}</Text>
+                                {c.seleccionado && <IconMaterial name="circle" size={10} color="#FFF" />}
+                            </TouchableOpacity>
+                        )}
+                    </ScrollView>
                 </View>
                 {this.state.buscandoPosts && <ActivityIndicator color="#831DA2" size="large" style={{ marginTop: 10 }} />}
 
                 <FlatList
                     data={this.state.posts}
                     renderItem={({ item }) => (
-                        <PostBox post={item} navigate={navigate} 
-                        ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} 
-                        VerUbicacion={()=>this.VerUbicacion(item.latitude,item.longitude)}/>
+                        <PostBox post={item} navigate={navigate}
+                            ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)}
+                            VerUbicacion={() => this.VerUbicacion(item.latitude, item.longitude)} />
 
                     )}
                     refreshing={this.state.refreshing}

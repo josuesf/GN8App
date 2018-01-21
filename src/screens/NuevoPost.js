@@ -64,6 +64,10 @@ export default class NuevoPost extends Component {
                 this.VolverPaso2()
                 return true
             }
+            if (this.state.paso4) {
+                this.VolverPaso3()
+                return true
+            }
             return false
         });
     }
@@ -92,6 +96,16 @@ export default class NuevoPost extends Component {
                 longitudeDelta: LONGITUDE_DELTA,
             },
             markers: [],
+            //Categorias
+            categorias: [
+                { id: 'COMIDA', nombre: 'Comida', seleccionado: false },
+                { id: 'BEBIDAS', nombre: 'Bebida', seleccionado: false },
+                { id: 'DISCOTECA', nombre: 'Discoteca', seleccionado: false },
+                { id: 'BAR', nombre: 'Bar', seleccionado: false },
+                { id: 'ROPA', nombre: 'Ropa', seleccionado: false },
+                { id: 'VIAJES', nombre: 'Viajes', seleccionado: false }
+            ],
+            categoriasSeleccionadas: 0
         }
         this.onMapPress = this.onMapPress.bind(this);
 
@@ -172,8 +186,19 @@ export default class NuevoPost extends Component {
                 { name: 'id_usuario', data: store.getState().id },
                 { name: 'nombre_usuario', data: store.getState().nombre },
                 { name: 'photo_url', data: store.getState().photoUrl },
-                { name: 'latitude', data: (this.state.markers[0].coordinate.latitude).toString() },
-                { name: 'longitude', data: (this.state.markers[0].coordinate.longitude).toString() },
+                {
+                    name: 'latitude',
+                    data: this.state.markers.length > 0 ?
+                        (this.state.markers[0].coordinate.latitude).toString()
+                        : "0"
+                },
+                {
+                    name: 'longitude',
+                    data: this.state.markers.length > 0 ?
+                        (this.state.markers[0].coordinate.longitude).toString()
+                        : "0"
+                },
+                { name: 'categorias', data: this.state.categoriasSeleccionadas },
                 { name: 'picture', filename: Date.now().toString() + store.getState().id + '.png', data: this.state.dataImg }
             ]
             RNFetchBlob.fetch('POST', URL_WS_SOCKET + "/ws/create_post", {
@@ -247,16 +272,35 @@ export default class NuevoPost extends Component {
         });
     }
     SigPaso2 = () => {
-        this.setState({ paso1: false, paso2: true, paso3: false })
+        this.setState({ paso1: false, paso2: true, paso3: false, paso4: false })
     }
     SigPaso3 = () => {
-        this.setState({ paso1: false, paso2: false, paso3: true })
+        this.setState({ paso1: false, paso2: false, paso3: true, paso4: false })
+    }
+    SigPaso4 = () => {
+        this.setState({ paso1: false, paso2: false, paso3: false, paso4: true })
     }
     VolverPaso1 = () => {
-        this.setState({ paso1: true, paso2: false, paso3: false })
+        this.setState({ paso1: true, paso2: false, paso3: false, paso4: false })
     }
     VolverPaso2 = () => {
-        this.setState({ paso1: false, paso2: true, paso3: false })
+        this.setState({ paso1: false, paso2: true, paso3: false, paso4: false })
+    }
+    VolverPaso3 = () => {
+        this.setState({ paso1: false, paso2: false, paso3: true, paso4: false })
+    }
+    SeleccionarCategoria = (id, valor) => {
+        var categorias = this.state.categorias
+        var count = 0
+        var CatSelec = ""
+        categorias.map(c => {
+            if (c.id == id) c.seleccionado = valor
+            if (c.seleccionado) {
+                count++
+                CatSelec += c.id + " "
+            }
+        })
+        this.setState({ categorias: categorias, categoriasSeleccionadas: CatSelec })
     }
     render() {
         const { navigate, goBack } = this.props.navigation;
@@ -276,12 +320,13 @@ export default class NuevoPost extends Component {
                             <IconFondation name="x" size={30} color="#95a5a6"
                                 style={{ marginHorizontal: 20, marginVertical: 10 }} />
                         </TouchableOpacity>
-                        <Boton text="Siguiente" onPress={this.SigPaso2}
-                            styleText={{ color: '#FFF', fontWeight: 'bold' }}
-                            styleBoton={{
-                                backgroundColor: '#9b59b6', marginHorizontal: 5,
-                                paddingVertical: 10, borderRadius: 5
-                            }} />
+                        {this.state.nombre_post.length > 3 && this.state.dataImg &&
+                            <Boton text="Siguiente" onPress={this.SigPaso2}
+                                styleText={{ color: '#FFF', fontWeight: 'bold' }}
+                                styleBoton={{
+                                    backgroundColor: '#9b59b6', marginHorizontal: 5,
+                                    paddingVertical: 10, borderRadius: 5
+                                }} />}
                     </View>
                     {this.state.ErrorPublicacion && <Text style={{ alignSelf: 'center', marginVertical: 10, color: 'red' }}
                     >No se puedo subir su publicacion,intentelo luego</Text>}
@@ -317,8 +362,16 @@ export default class NuevoPost extends Component {
                                 style={{ marginHorizontal: 10, marginVertical: 10 }} />
                             <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>Volver al paso 1</Text>
                         </TouchableOpacity>
-                        <Boton text="Siguiente" onPress={this.SigPaso3} styleText={{ color: '#FFF', fontWeight: 'bold' }}
-                            styleBoton={{ backgroundColor: '#9b59b6', marginHorizontal: 5, paddingVertical: 10, borderRadius: 5 }} />
+                        {!this.state.codigoqr ?
+                            <Boton text="Siguiente" onPress={this.SigPaso3} styleText={{ color: '#FFF', fontWeight: 'bold' }}
+                                styleBoton={{ backgroundColor: '#9b59b6', marginHorizontal: 5, paddingVertical: 10, borderRadius: 5 }} />
+                            : (this.state.codigoqr_des.length > 3 &&
+                                <Boton text="Siguiente" onPress={this.SigPaso3} styleText={{ color: '#FFF', fontWeight: 'bold' }}
+                                    styleBoton={{ backgroundColor: '#9b59b6', marginHorizontal: 5, paddingVertical: 10, borderRadius: 5 }} />
+                            )
+                        }
+
+
                     </View>
                     <CheckBox
                         containerStyle={{ marginTop: 10, backgroundColor: '#FFF', borderWidth: 0 }}
@@ -338,6 +391,8 @@ export default class NuevoPost extends Component {
                         <View>
                             <FormLabel labelStyle={{ color: '#7f8c8d', fontSize: 15 }}>• Que ofrecera tu codigo?</FormLabel>
                             <FormInput ref="qrdesInput"
+                                value={this.state.codigoqr_des}
+                                placeholderTextColor={"lightgray"}
                                 placeholder={"Ejm: Pase libre, 10% de descuento ..."}
                                 underlineColorAndroid="#eee"
                                 onChangeText={(text) => this.setState({ codigoqr_des: text, error_codigoqr_des: false })} />
@@ -380,23 +435,32 @@ export default class NuevoPost extends Component {
                     </MapView>
                     <View style={styles.buttonContainer}>
                         {markers.length == 0 ?
-                            <View
-                                onPress={() => this.setState({ markers: [] })}
-                                style={[{
-                                    backgroundColor: 'rgba(255,255,255,0.7)',
-                                    paddingVertical: 18, width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
-                                }]}
-                            >
-                                <IconFondation name="marker" size={30} />
-                                <Text style={{ marginHorizontal: 10, fontWeight: 'bold' }}>Toca donde quieras establecer tu punto exacto</Text>
-                            </View> :
+                            <View style={{ alignItems: 'center' }}>
+                                <TouchableOpacity
+                                    onPress={this.SigPaso4}
+                                    style={[styles.bubble, { flexDirection: 'row', alignItems: 'center', marginVertical: 20 }]}
+                                >
+                                    <Text style={{ marginHorizontal: 10, fontWeight: 'bold' }}>Continuar sin ubicacion</Text>
+                                    <IconFondation name="arrow-right" size={30} />
+                                </TouchableOpacity>
+                                <View
+                                    style={[{
+                                        backgroundColor: 'rgba(255,255,255,0.7)',
+                                        paddingVertical: 18, width, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+                                    }]}
+                                >
+                                    <IconFondation name="marker" size={30} />
+                                    <Text style={{ marginHorizontal: 10, fontWeight: 'bold' }}>Toca donde quieras establecer tu punto exacto</Text>
+                                </View>
+                            </View>
+                            :
                             <View>
                                 <TouchableOpacity
-                                    onPress={this.storePicture}
+                                    onPress={this.SigPaso4}
                                     style={[styles.bubble, { flexDirection: 'row', backgroundColor: '#9b59b6', alignItems: 'center' }]}
                                 >
                                     <IconFondation name="check" size={30} color="#FFF" />
-                                    <Text style={{ marginHorizontal: 10, fontWeight: 'bold', color: 'white' }}>Publicar</Text>
+                                    <Text style={{ marginHorizontal: 10, fontWeight: 'bold', color: 'white' }}>Continuar</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => this.setState({ markers: [] })}
@@ -410,6 +474,42 @@ export default class NuevoPost extends Component {
 
                     </View>
                 </View>
+                }
+                {this.state.paso4 && <ScrollView>
+                    <View style={[styles.toolbar]} >
+                        <TouchableOpacity onPress={this.VolverPaso3} style={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
+                            <IconMaterial name="arrow-left" size={30} color="#95a5a6"
+                                style={{ marginHorizontal: 10, marginVertical: 10 }} />
+                            <Text style={{ color: '#95a5a6', fontWeight: 'bold' }}>Volver al paso 3</Text>
+                        </TouchableOpacity>
+                        {this.state.categoriasSeleccionadas.length > 0 &&
+                            <Boton text="Publicar" onPress={this.storePicture} styleText={{ color: '#FFF', fontWeight: 'bold' }}
+                                styleBoton={{ backgroundColor: '#9b59b6', marginHorizontal: 5, paddingVertical: 10, borderRadius: 5 }} />
+                        }
+
+                    </View>
+                    <Text style={{
+                        color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
+                            ios: { fontFamily: 'Arial', },
+                            android: { fontFamily: 'Roboto' }
+                        }), padding: 20
+                    }}>Seleccione</Text>
+
+                    {this.state.categorias.map(c =>
+                        <CheckBox
+                            key={c.id}
+                            containerStyle={{ marginTop: 10, backgroundColor: '#FFF', borderWidth: 0 }}
+                            textStyle={{ color: '#7f8c8d', fontSize: 15 }}
+                            title={c.nombre}
+                            checked={c.seleccionado}
+                            iconType='material'
+                            checkedIcon='check-box'
+                            uncheckedIcon='check-box-outline-blank'
+                            checkedColor='purple'
+                            onPress={() => this.SeleccionarCategoria(c.id, !c.seleccionado)}
+                        />
+                    )}
+                </ScrollView>
                 }
             </View>
         );

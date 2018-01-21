@@ -32,7 +32,7 @@ export default class PerfilGuardados extends Component<{}> {
         super()
         this.state = {
             refreshing: false,
-            loadingMore: false,
+            loadingMore: true,
             SeguirCargando: false,
             page: 1,
             posts: [],
@@ -43,7 +43,7 @@ export default class PerfilGuardados extends Component<{}> {
     ObtenerCodigoQR = () => {
 
     }
-    componentDidMount() {
+    componentWillMount() {
         this.CargarPosts()
     }
     CargarPosts = () => {
@@ -120,7 +120,7 @@ export default class PerfilGuardados extends Component<{}> {
                     onEndReachedThreshold={10}
                     initialNumToRender={10}
                 />
-                {(this.state.posts.length == 0) &&
+                {(this.state.posts.length == 0) && !this.state.loadingMore &&
                     <View >
                         <Text style={{
                             color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({

@@ -35,6 +35,7 @@ import PostBox from '../components/PostBox'
 import QRCode from 'react-native-qrcode';
 import PerfilGuardados from '../SubScreens/PerfilGuardados'
 import PerfilInvitaciones from '../SubScreens/PerfilInvitaciones'
+import PerfilPosts from '../SubScreens/PerfilPosts'
 
 const { width, height } = Dimensions.get('window')
 export default class Perfil extends Component<{}> {
@@ -69,12 +70,6 @@ export default class Perfil extends Component<{}> {
             videoSource: null,
             dataImg: null,
             selectedIndex: 0,
-            refreshing: false,
-            loadingMore: false,
-            SeguirCargando: false,
-            page: 1,
-            posts: [],
-
         }
     }
 
@@ -92,17 +87,10 @@ export default class Perfil extends Component<{}> {
                     password: res.password,
                     photoUrl: res.photo_url,
                     es_empresa: res.es_empresa
-                },
-                    () => {
-                        this.CargarPosts()
-
-                    }
+                }
                 )
             }
         })
-
-    }
-    componentDidMount() {
 
     }
     selectPhotoTapped() {
@@ -184,58 +172,7 @@ export default class Perfil extends Component<{}> {
     updateIndex = (selectedIndex) => {
         this.setState({ selectedIndex })
     }
-    ObtenerCodigoQR = () => {
-
-    }
-    CargarPosts = () => {
-        this.setState({ loadingMore: true })
-        const parametros = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                page: this.state.page,
-                id_usuario: this.state.id,
-            })
-        }
-        fetch(URL_WS_SOCKET + "/ws/posts_user", parametros)
-            .then(response => response.json())
-            .then(responseJson => {
-                if (responseJson.res == "ok") {
-                    this.setState({
-                        posts: this.state.page == 1 ?
-                            responseJson.posts
-                            : [...this.state.posts, ...responseJson.posts],
-                        loadingMore: false,
-                        SeguirCargando: responseJson.posts.length != 0 ? true : false
-                    })
-                } else {
-                    this.setState({ loadingMore: false })
-                }
-            })
-            .catch(err => {
-                this.setState({ loadingMore: false })
-                //Agregar un indicador de falta de conexio
-            })
-    }
-    handleLoadMore = () => {
-        if (this.state.SeguirCargando)
-            this.setState(
-                {
-                    page: this.state.page + 1
-                    , SeguirCargando: false
-                },
-                () => {
-                    this.CargarPosts();
-                }
-            );
-
-    };
-    _onRefresh = () => {
-        this.setState({ page: 1 }, () => this.CargarPosts())
-    }
+    
     render() {
         const { navigate } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
@@ -247,7 +184,7 @@ export default class Perfil extends Component<{}> {
         const component3 = () => <Icon name="md-bookmark" size={30} color="#95a5a6" />
         const buttons = this.state.es_empresa == "SI" ?
             [{ element: component1 }, { element: component2 }, { element: component3 }]
-            : [{ element: component1 }, { element: component3 }]
+            : [{ element: component1 }, { element: component2 }, { element: component3 }]
         const { selectedIndex } = this.state
         return (
             <View style={styles.container} ref="perfil">
@@ -302,25 +239,7 @@ export default class Perfil extends Component<{}> {
                         buttons={buttons}
                         containerStyle={{ height: 40 }} />
                 </View>
-                {this.state.selectedIndex == 0 && this.state.es_empresa == "SI" && <FlatList
-                    data={this.state.posts}
-                    renderItem={({ item }) => (
-                        <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
-
-                    )}
-                    refreshing={this.state.refreshing}
-                    onRefresh={this._onRefresh}
-                    keyExtractor={(item, index) => index}
-                    ListFooterComponent={() =>
-                        !this.state.loadingMore ?
-                            (this.state.SeguirCargando ? null :
-                                null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                            : <Image source={require('../assets/img/loading.gif')} style={{ marginVertical: 10, height: 50, width: 50, alignSelf: 'center' }} />
-                    }
-                    onEndReached={this.handleLoadMore}
-                    onEndReachedThreshold={10}
-                    initialNumToRender={10}
-                />}
+                {this.state.selectedIndex == 0 && <PerfilPosts navigation={this.props.navigation} />}
                 {this.state.selectedIndex == 1 && <PerfilInvitaciones navigation={this.props.navigation} />}
                 {this.state.selectedIndex == 2 && <PerfilGuardados navigation={this.props.navigation} />}
             </View>

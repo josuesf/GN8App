@@ -19,7 +19,7 @@ import {
     AsyncStorage,
     Alert,
 } from 'react-native';
-import { URL_WS } from '../Constantes'
+import { URL_WS,URL_WS_SOCKET } from '../Constantes'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NavigationActions } from 'react-navigation'
 import { ProgressDialog } from 'react-native-simple-dialogs';
@@ -73,7 +73,7 @@ export default class Login extends Component<{}> {
                                 email: res.email,
                             })
                         }
-                        fetch(URL_WS + '/ws/isuser', parametros)
+                        fetch(URL_WS_SOCKET + '/ws/isuser', parametros)
                             .then((response) => response.json())
                             .then((responseJson) => {
                                 if (responseJson.res != "ok") {
@@ -116,7 +116,7 @@ export default class Login extends Component<{}> {
                                     //Si ya fue registrado
                                     const user = responseJson.user
                                     const user_data = {
-                                        id: user.id,
+                                        id: user._id,
                                         username: user.username,
                                         name: user.name,
                                         email: user.email,
@@ -172,19 +172,21 @@ export default class Login extends Component<{}> {
                 password: this.state.password
             })
         }
-        fetch(URL_WS + '/ws/signin', parametros)
+        fetch(URL_WS_SOCKET + '/ws/signin', parametros)
             .then((response) => response.json())
             .then((responseJson) => {
                 if (responseJson.res == 'ok') {
                     const user = responseJson.user
                     const user_data = {
-                        id: user.id,
+                        id: user._id,
                         username: user.username,
                         name: user.name,
                         email: user.email,
                         password: user.password,
                         photo_url: user.photo_url,
                         es_empresa:user.es_empresa,
+                        direccion:user.direccion,
+                        telefono:user.telefono,
                         categorias:user.categorias,
                     }
                     console.log(user_data)

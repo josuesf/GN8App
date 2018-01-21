@@ -59,7 +59,7 @@ export default class Invitaciones extends Component<{}> {
       resultado: '',
       invitaciones: [],
       refreshing: false,
-      loadingMore: false,
+      loadingMore: true,
       SeguirCargando: false,
       page: 1,
       modalCodigoQR: false,
@@ -199,7 +199,7 @@ export default class Invitaciones extends Component<{}> {
           onEndReachedThreshold={0.1}
           initialNumToRender={10}
         />
-        {this.state.invitaciones.length == 0 &&
+        {this.state.invitaciones.length == 0 && !this.state.loadingMore &&
           <View >
             <Text style={{
               color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop:20,
   },
   camera: {
     justifyContent: 'center',

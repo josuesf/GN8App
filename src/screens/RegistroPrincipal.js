@@ -40,7 +40,7 @@ export default class RegistroPrincipal extends Component<{}> {
         }
     }
 
-    registrarEmpresa=()=>{
+    registrarEmpresa = () => {
         this.props.navigation.navigate('registroEmpresa')
     }
 
@@ -96,12 +96,12 @@ export default class RegistroPrincipal extends Component<{}> {
                                                 NavigationActions.navigate(
                                                     {
                                                         routeName: 'registrodetalle',
-                                                        params: { 
-                                                            user: user_data.email, 
-                                                            photoUrl: user_data.picture, 
+                                                        params: {
+                                                            user: user_data.email,
+                                                            photoUrl: user_data.picture,
                                                             nombre: res.name,
                                                             esEmpresa: 'NO',
-                                                         }
+                                                        }
                                                     })
                                             ]
                                         })
@@ -171,14 +171,18 @@ export default class RegistroPrincipal extends Component<{}> {
             <View style={styles.container}>
                 <StatusBar backgroundColor="white" barStyle="dark-content" />
                 <View style={{ height: height / 3, justifyContent: 'center' }}>
-                    <Text style={{
-                        color: '#d1c4e9', fontWeight: 'bold',
-                        fontSize: 40
-                    }}>GN8</Text>
+                    <View style={{ alignItems: 'center' }}>
+                        <Image style={{ height: 80, width: 120, resizeMode: 'contain' }}
+                            source={require('../assets/img/summer1.png')} />
+                        
+                    </View>
+
                 </View>
+
+
                 <View style={{ height: height / 3, alignItems: 'center' }}>
 
-                    
+
                     <TouchableOpacity activeOpacity={0.8}
                         style={{
                             shadowOffset: {
@@ -186,7 +190,7 @@ export default class RegistroPrincipal extends Component<{}> {
                                 height: 5,
                             },
                             shadowColor: 'black',
-                            shadowOpacity: 0.4,elevation: 5,
+                            shadowOpacity: 0.4, elevation: 5,
                             borderWidth: 1, borderRadius: 2, borderColor: '#4090db', backgroundColor: '#4090db',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
                             alignItems: 'center', justifyContent: 'center'
@@ -202,7 +206,7 @@ export default class RegistroPrincipal extends Component<{}> {
                                 height: 5,
                             },
                             shadowColor: 'black',
-                            shadowOpacity: 0.4,elevation: 5,
+                            shadowOpacity: 0.4, elevation: 5,
                             borderWidth: 1, borderRadius: 2, borderColor: '#FFF', backgroundColor: '#FFF',
                             width: width - 50, padding: 15, alignItems: 'center', marginBottom: 10, flexDirection: 'row',
                             alignItems: 'center', justifyContent: 'center'
@@ -210,7 +214,7 @@ export default class RegistroPrincipal extends Component<{}> {
                         onPress={this.registrarEmpresa}>
                         <Text style={{ color: '#333', fontWeight: 'bold', marginLeft: 10 }}>SOY UNA EMPRESA</Text>
                     </TouchableOpacity>
-                    
+
                     <ProgressDialog
                         visible={this.state.progressVisible}
                         title="Conectando"

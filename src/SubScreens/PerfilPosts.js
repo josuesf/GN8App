@@ -24,31 +24,28 @@ import { URL_WS_SOCKET } from '../Constantes'
 import store from '../store'
 import PostBox from '../components/PostBox'
 import Boton from '../components/Boton';
-import QRCode from 'react-native-qrcode';
 
 const { width, height } = Dimensions.get('window')
-export default class PerfilInvitaciones extends Component<{}> {
+export default class PerfilGuardados extends Component<{}> {
 
     constructor() {
         super()
         this.state = {
-            SeguirCargando_qrs: false,
-            page_qr: 1,
-            invitaciones: [],
-            refreshing_qrs: false,
-            loadingMore_qrs:true,
+            refreshing: false,
+            loadingMore: true,
+            SeguirCargando: false,
+            page: 1,
+            posts: [],
         }
     }
-
-
+    componentDidMount() {
+        this.CargarPosts()
+    }
     ObtenerCodigoQR = () => {
 
     }
-    componentDidMount() {
-        this.CargarInvitaciones()
-    }
-    CargarInvitaciones = () => {
-        this.setState({ loadingMore_qrs: true })
+    CargarPosts = () => {
+        this.setState({ loadingMore: true })
         const parametros = {
             method: 'POST',
             headers: {
@@ -56,46 +53,45 @@ export default class PerfilInvitaciones extends Component<{}> {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                page: this.state.page_qr,
-                id_usuario_invitado: store.getState().id
+                page: this.state.page,
+                id_usuario: store.getState().id,
             })
         }
-        fetch(URL_WS_SOCKET + "/ws/invitaciones_user_check", parametros)
+        fetch(URL_WS_SOCKET + "/ws/posts_user", parametros)
             .then(response => response.json())
             .then(responseJson => {
                 if (responseJson.res == "ok") {
                     this.setState({
-                        invitaciones: this.state.page_qr == 1 ?
-                            responseJson.invitaciones
-                            : [...this.state.invitaciones, ...responseJson.invitaciones],
-                        loadingMore_qrs: false,
-                        SeguirCargando_qrs: responseJson.invitaciones.length != 0 ? true : false
+                        posts: this.state.page == 1 ?
+                            responseJson.posts
+                            : [...this.state.posts, ...responseJson.posts],
+                        loadingMore: false,
+                        SeguirCargando: responseJson.posts.length != 0 ? true : false
                     })
-
                 } else {
-                    this.setState({ loadingMore_qrs: false })
+                    this.setState({ loadingMore: false })
                 }
             })
             .catch(err => {
-                this.setState({ loadingMore_qrs: false })
+                this.setState({ loadingMore: false })
                 //Agregar un indicador de falta de conexio
             })
     }
-    handleLoadMore_qrs = () => {
-        if (this.state.SeguirCargando_qrs)
+    handleLoadMore = () => {
+        if (this.state.SeguirCargando)
             this.setState(
                 {
-                    page_qr: this.state.page_qr + 1
-                    , SeguirCargando_qrs: false
+                    page: this.state.page + 1
+                    , SeguirCargando: false
                 },
                 () => {
-                    this.CargarInvitaciones();
+                    this.CargarPosts();
                 }
             );
 
     };
-    _onRefresh_qrs = () => {
-        this.setState({ page_qr: 1 }, () => { this.CargarInvitaciones() })
+    _onRefresh = () => {
+        this.setState({ page: 1 }, () => this.CargarPosts())
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -103,49 +99,41 @@ export default class PerfilInvitaciones extends Component<{}> {
         return (
             <View style={styles.container} ref="perfil">
                 <FlatList
-                    numColumns={3}
-                    data={this.state.invitaciones}
+                    data={this.state.posts}
                     renderItem={({ item }) => (
-                        /*<InvitacionBox invitacion={item} navigate={navigate} 
-                        VerCodigoQR={() => this.VerCodigoQR(item)} />*/
-                        <View style={{ padding: 10 }}>
-                            <QRCode
-                                value={item._id}
-                                size={width / 3 - 20}
-                                bgColor='#d1c4e9'
-                                fgColor='white' />
-                        </View>
+                        <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
+
                     )}
-                    refreshing={this.state.refreshing_qrs}
-                    onRefresh={this._onRefresh_qrs}
+                    refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() =>
-                        !this.state.loadingMore_qrs ?
-                            (this.state.SeguirCargando_qrs ? null :
+                        !this.state.loadingMore ?
+                            (this.state.SeguirCargando ? null :
                                 null)//<Text style={{ alignSelf: 'center', marginVertical: 5, color: '#757575' }}>No hay mas comentarios</Text>)
-                            : <ActivityIndicator style={{ marginVertical: 10 }} size="large" color={"#831DA2"} />
+                            : <Image source={require('../assets/img/loading.gif')} style={{ marginVertical: 10, height: 50, width: 50, alignSelf: 'center' }} />
                     }
-                    onEndReached={this.handleLoadMore_qrs}
+                    onEndReached={this.handleLoadMore}
                     onEndReachedThreshold={10}
                     initialNumToRender={10}
                 />
-                {(this.state.invitaciones.length == 0) && !this.state.loadingMore_qrs &&
+                {(this.state.posts.length == 0) && !this.state.loadingMore &&
                     <View >
                         <Text style={{
                             color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({
                                 ios: { fontFamily: 'Arial', },
                                 android: { fontFamily: 'Roboto' }
                             }), padding: 20
-                        }}>Codigos canjeados</Text>
+                        }}>Tus Publicaciones</Text>
                         <Text style={{
                             color: '#333', ...Platform.select({
                                 ios: { fontFamily: 'Arial', },
                                 android: { fontFamily: 'Roboto' }
                             }), padding: 20
                         }}>
-                            Aqui encontraras todos los codigos que canjeaste, mientras mas tengas acumularas mas puntos
-                                </Text>
-                        <Boton styleText={{ color: '#9b59b6' }} onPress={() => navigate('invitaciones')} text={"Empezar a escanear codigos"} />
+                            Aqui encontraras todas las publicaciones que hiciste para ganar mas estrellas y poder canajearlas.
+                    </Text>
+                        <Boton styleText={{ color: '#9b59b6' }} onPress={() => navigate('home')} text={"Empezar a publicar"} />
                     </View>
                 }
 

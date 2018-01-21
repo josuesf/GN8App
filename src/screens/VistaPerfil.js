@@ -68,6 +68,7 @@ export default class VistaPerfil extends Component<{}> {
             page_qr: 1,
             invitaciones: [],
             refreshing_qrs: false,
+            loadingMore_qrs:true,
 
             modalCodigoQR: false,
         }
@@ -76,8 +77,8 @@ export default class VistaPerfil extends Component<{}> {
     componentWillMount() {
         this.BuscarUsuario()
         this.CargarPosts()
+        
     }
-
 
     updateIndex = (selectedIndex) => {
         this.setState({ selectedIndex })
@@ -141,6 +142,8 @@ export default class VistaPerfil extends Component<{}> {
                         likes: responseJson.user.likes,
                         es_empresa: responseJson.user.es_empresa,
                         selectedIndex:responseJson.user.es_empresa=="SI"?1:0
+                    },()=>{
+                        this.CargarInvitaciones()
                     })
                 }
             })
@@ -240,6 +243,9 @@ export default class VistaPerfil extends Component<{}> {
                 this.setState({ recuperandoCodigo: false })
             })
     }
+    VerUbicacion = (lat, long) => {
+        this.props.navigation.navigate('mapa', { latitude: lat, longitude: long })
+    }
     render() {
         const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
@@ -296,7 +302,9 @@ export default class VistaPerfil extends Component<{}> {
                     <FlatList
                         data={this.state.posts}
                         renderItem={({ item }) => (
-                            <PostBox post={item} navigate={navigate} ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)} />
+                            <PostBox post={item} navigate={navigate} 
+                            ObtenerCodigoQR={() => this.ObtenerCodigoQR(item)}
+                            VerUbicacion={() => this.VerUbicacion(item.latitude, item.longitude)} />
 
                         )}
                         refreshing={this.state.refreshing}
@@ -342,7 +350,7 @@ export default class VistaPerfil extends Component<{}> {
                         onEndReachedThreshold={10}
                         initialNumToRender={10}
                     />
-                        {(this.state.invitaciones.length == 0) &&
+                        {this.state.invitaciones.length == 0 && !this.state.loadingMore_qrs &&
                             <View >
                                 <Text style={{
                                     color: '#333', fontWeight: 'bold', fontSize: 30, ...Platform.select({

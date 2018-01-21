@@ -72,6 +72,8 @@ export default class EditarPerfil extends Component<{}> {
                     usuario: res.username,
                     password: res.password,
                     photoUrl: res.photo_url,
+                    direccion:res.direccion,
+                    telefono:res.telefono,
                     es_empresa: res.es_empresa,
                     categorias:res.categorias,
                     checkBar:categoriasSplit.indexOf('BAR')!=-1,
@@ -269,7 +271,7 @@ export default class EditarPerfil extends Component<{}> {
     render() {
         const { navigate, goBack } = this.props.navigation;
         const photo = this.state.photoUrl && this.state.photoUrl != "sin_imagen" ?
-            <Image source={{ uri: URL_WS_SOCKET+this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
+            <Image source={{ uri: this.state.photoUrl }} style={{ borderRadius: 50, height: 100, width: 100 }} />
             : <Icon name="ios-camera" size={100} color="#9e9e9e" style={{ marginRight: 15 }} />
 
         return (
@@ -296,10 +298,13 @@ export default class EditarPerfil extends Component<{}> {
                         <FormLabel>Nombre</FormLabel>
                         <FormInput underlineColorAndroid="#eee" value={this.state.nombre} onChangeText={(text)=>this.setState({nombre:text})} />
                         <FormLabel>Usuario</FormLabel>
-                        <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.usuario} onChangeText={(text)=>this.setState({usuario:text})} />
+                        <FormInput underlineColorAndroid="#eee" editable={true} value={this.state.usuario} onChangeText={(text)=>this.setState({usuario:text})} />
                         <FormLabel>Correo</FormLabel>
                         <FormInput underlineColorAndroid="#eee" editable={false} value={this.state.correo} onChangeText={(text)=>this.setState({correo:text})} />
-                        
+                        <FormLabel>Direccion</FormLabel>
+                        <FormInput underlineColorAndroid="#eee" editable={true} value={this.state.direccion} onChangeText={(text)=>this.setState({correo:text})} />
+                        <FormLabel>Telefono</FormLabel>
+                        <FormInput underlineColorAndroid="#eee" editable={true} value={this.state.telefono} onChangeText={(text)=>this.setState({correo:text})} />
                         
                         <FormLabel>Servicios de Empresa</FormLabel>
                         <CheckBox  title='Bar'
