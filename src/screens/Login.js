@@ -249,7 +249,7 @@ export default class Login extends Component<{}> {
                         backgroundColor: '#fafafa', width: width - 50, paddingLeft: 5, marginBottom: 10,
                         justifyContent: 'center', height: 50
                     }}>
-                        <TextInput onChangeText={(text) => this.setState({ password: text })}
+                        <TextInput autoCapitalize="none" onChangeText={(text) => this.setState({ password: text })}
                             secureTextEntry={true} placeholder="Contraseña" placeholderTextColor="#9e9e9e" underlineColorAndroid="transparent" selectionColor='#9575cd' />
                     </View>
                     {(this.state.email.length == 0 || this.state.password.length == 0) &&

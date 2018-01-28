@@ -41,17 +41,18 @@ export default class Home extends Component<{}> {
         header: null,
         tabBarLabel: Platform.OS == 'android' ? ({ tintColor, focused }) => (
             <Text style={{ fontSize: 10, color: focused ? tintColor : '#95a5a6' }}>
-                HOME
+                EXPLORAR
             </Text>
         ) : "HOME",
         tabBarIcon: ({ tintColor, focused }) => (
             <IconFondation
-                name={focused ? 'home' : 'home'}
+                name={focused ? 'magnifying-glass' : 'magnifying-glass'}
                 size={30}
                 color={focused ? tintColor : '#95a5a6'}
             />
         ),
     };
+    
     constructor() {
         console.ignoredYellowBox = [
             'Setting a timer'
