@@ -21,13 +21,14 @@ import DieronLike from './screens/DieronLike';
 import NuevoPost from './screens/NuevoPost';
 import VistaPerfil from './screens/VistaPerfil';
 import Mapa from './screens/Mapa'
+import Index from './screens/Index'
 const Main = TabNavigator({
   home: {
-    screen: Home,
+    screen: Index,
     path: 'homeTab',
   },
   buscador: {
-    screen: Buscar,
+    screen: Home,
     path: 'buscar',
   },
   invitaciones: {
